@@ -1,4 +1,4 @@
-import NextAuth, { type NextAuthOptions } from "next-auth";
+import NextAuth, { Awaitable, type NextAuthOptions , Session} from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import { PrismaClient } from "@prisma/client";
@@ -12,6 +12,12 @@ export const authOptions: NextAuthOptions = {
     })
   ],
   adapter: PrismaAdapter(new PrismaClient()),
+  callbacks: {
+    async session({session, token, user}) {
+      session.user.userId = user.id;
+      return session;
+    }
+  }
 };
 
 const handler = NextAuth(authOptions);
