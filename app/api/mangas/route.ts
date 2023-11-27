@@ -1,9 +1,6 @@
+import { getSafeSessionServer, prisma } from "@/lib/utils";
 import { mangaSchema, newMangaSchema } from "@/schemas/mangasSchemas";
-import { PrismaClient } from "@prisma/client";
-import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
-import { authOptions } from "../auth/[...nextauth]/route";
-import { useSession } from "next-auth/react";
 
 
 export const PUT = async (req: Request) => {
@@ -11,7 +8,6 @@ export const PUT = async (req: Request) => {
     const safeBody = mangaSchema.safeParse(body);
     if (safeBody.success) {
         const { data } = safeBody;
-        const prisma = new PrismaClient();
 
         const mangaUpdated = await prisma.manga.update({
             where: { id: data.id },
@@ -30,8 +26,7 @@ export const POST = async (req: Request) => {
     const safeBody = newMangaSchema.safeParse(body);
     if (safeBody.success) {
         const { data: manga } = safeBody;
-        const prisma = new PrismaClient();
-        const session = await getServerSession(authOptions);
+        const session = await getSafeSessionServer();
         try {
             const createdManga = await prisma.manga.create({
                 data: {
@@ -53,7 +48,6 @@ export const DELETE = async (req: Request) => {
     const safeBody = mangaSchema.safeParse(body);
     if (safeBody.success) {
         const { data: manga } = safeBody;
-        const prisma = new PrismaClient();
 
         try {
             const mangaDeleted = await prisma.manga.delete({

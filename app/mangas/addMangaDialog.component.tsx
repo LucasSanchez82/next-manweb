@@ -1,20 +1,14 @@
 'use client'
 import AutoForm, { AutoFormSubmit } from "@/components/ui/auto-form"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import {
     Dialog,
     DialogContent,
-    DialogDescription,
-    DialogFooter,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
+    DialogTrigger
 } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { NewManga } from "@/lib/types"
-import { mangaSchema, newMangaSchema } from "@/schemas/mangasSchemas"
+import { newMangaSchema } from "@/schemas/mangasSchemas"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 

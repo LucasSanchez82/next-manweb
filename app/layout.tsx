@@ -1,14 +1,14 @@
+import { ModeToggle } from '@/components/modeToggle'
+import { SignInButtons, SignOutButtons } from '@/components/nextAuthButtons'
+import { ThemeProvider } from '@/components/theme-provider'
+import { Button } from '@/components/ui/button'
+import { getSafeSessionServer } from '@/lib/utils'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import './globals.css'
-import { ThemeProvider } from '@/components/theme-provider'
-import { ModeToggle } from '@/components/modeToggle'
-import { Button } from '@/components/ui/button'
 import Link from 'next/link'
+import './globals.css'
 import { getServerSession } from 'next-auth'
 import { authOptions } from './api/auth/[...nextauth]/route'
-import { signIn, signOut } from 'next-auth/react'
-import { SignInButtons, SignOutButtons } from '@/components/nextAuthButtons'
 
 const inter = Inter({ subsets: ['latin'] })
 

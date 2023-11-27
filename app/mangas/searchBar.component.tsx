@@ -10,7 +10,6 @@ const Searchbar = () => {
   const searchParams = useSearchParams()!;
   const currSearchStr = searchParams.get("search");
 
-
   const createQueryString = useCallback(
     (name: string, value: string) => {
       const params = new URLSearchParams(searchParams);
@@ -30,7 +29,7 @@ const Searchbar = () => {
       if (searchStr && searchStr !== currSearchStr) {
         router.push(pathname + "?" + createQueryString("search", searchStr));
         console.log(searchParams.get("search"));
-      }
+      }else if (searchStr === "") router.push(pathname);
     }
   };
   return (

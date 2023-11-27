@@ -1,52 +1,36 @@
-import { getServerSession } from "next-auth";
-import { Suspense } from "react";
-import { authOptions } from "../api/auth/[...nextauth]/route";
+import { MangaCard } from "@/app/mangas/mangaCard.component";
+import { SearchParams } from "@/lib/types";
+import { getSafeSessionServer } from "@/lib/utils";
 import { redirect } from "next/navigation";
-import { PrismaClient } from "@prisma/client";
-import { MangaCard } from "@/app/mangas/mangaCard";
-import { AddMangaDialog } from "./addMangaDialog";
-import Searchbar from "./searchBar";
+import { Suspense } from "react";
+import { searchMangasByUser } from "./@actions/searchUser";
+import { AddMangaDialog } from "./addMangaDialog.component";
+import Searchbar from "./searchBar.component";
+import MangaContainer from "./mangaContainer.component";
 
-const page = async () => {
-  const session = await getServerSession(authOptions);
-  
+const page = async ({ searchParams }: SearchParams) => {
+  const session = await getSafeSessionServer();
+
   if (!session) {
     redirect("/");
   }
 
-  const prisma = new PrismaClient();
-  const searchTitle = ""
-  const mangas = await prisma.manga.findMany({
-    where: {
-      AND: {
-        user: {
-          email: session.user?.email!,
-        },
-        title: {
-          contains: searchTitle,
-        },
-      },
-    },
-    orderBy: {
-      id: "desc",
-    },
-  });
+  const searchFormdata = new FormData();
+  searchFormdata.set("search", String(searchParams?.search || ""));
+  const safeMangas = await searchMangasByUser(searchFormdata);
 
   return (
     <>
       <div className="flex flex-col justify-center items-center">
         <h2>Ajouter un manga</h2>
-        {/* afficher un dialog */}
         <AddMangaDialog />
       </div>
-    <Searchbar />
-      <Suspense>
-        <div className="flex flex-row flex-wrap justify-around m-auto">
-          {mangas.map((el) => (
-            <MangaCard {...el} key={el.id} />
-          ))}
-        </div>
-      </Suspense>
+      
+      {safeMangas.success ? (
+        <MangaContainer mangas={safeMangas.mangas} />
+      ) : (
+        safeMangas.error
+      )}
     </>
   );
 };
