@@ -14,6 +14,8 @@ import NextImage from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import * as React from "react";
+import { updateManga } from "./@actions/update";
+import { MangaUpdateForm } from "./mangaUpdateForm.component";
 
 export function MangaCard({ title, linkImage, linkManga, chapter, id }: Manga) {
   const [manga, setManga] = React.useState<Manga>({
@@ -26,31 +28,7 @@ export function MangaCard({ title, linkImage, linkManga, chapter, id }: Manga) {
   const router = useRouter();
   const [isErrorImage, setIsErrorImage] = React.useState(false);
 
-  const handleSubmit = async (event: React.SyntheticEvent) => {
-    event.preventDefault();
-    const target = event.target;
 
-    if (target instanceof HTMLFormElement) {
-      const formData = Object.fromEntries(new FormData(target));
-      setManga((el) => {
-        let newManga = el;
-        newManga.chapter = Number(formData.chapter) || el.chapter;
-        return newManga;
-      });
-      // call api pour update chapitre
-      const response = await fetch("api/mangas", {
-        method: "PUT",
-        body: JSON.stringify(manga),
-      });
-      if (response.ok) {
-        const res = await response.json();
-
-        router.refresh();
-      } else {
-        console.error("internal servor error");
-      }
-    }
-  };
 
   const handleDelete = async () => {
     //suppression
@@ -95,27 +73,12 @@ export function MangaCard({ title, linkImage, linkManga, chapter, id }: Manga) {
             className={"rounded object-cover w-full h-full "}
             src={isErrorImage ? "/404.gif" : linkImage}
             alt="image"
-            // min-width={"100%"}
-            // min-height={"100%"}
             onError={() => setIsErrorImage(true)}
           />
         )}
       </CardContent>
       <CardFooter className="w-100 z-10">
-        <form
-          className="flex items-center justify-around p-0 w-100"
-          onSubmit={handleSubmit}
-        >
-          <Input
-            defaultValue={chapter}
-            className="w-2/4"
-            type="number"
-            name="chapter"
-            id="chapter"
-            placeholder="chapter.."
-          />
-          <Button className="w-1/4">Update</Button>
-        </form>
+        <MangaUpdateForm chapter={chapter} idManga={manga.id} />
       </CardFooter>
     </Card>
   );

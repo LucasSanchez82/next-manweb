@@ -1,14 +1,10 @@
-import { MangaCard } from "@/app/mangas/mangaCard.component";
-import { SearchParams } from "@/lib/types";
 import { getSafeSessionServer } from "@/lib/utils";
 import { redirect } from "next/navigation";
-import { Suspense } from "react";
-import { searchMangasByUser } from "./@actions/searchUser";
+import { getMangasByUser } from "./@actions/searchUser";
 import { AddMangaDialog } from "./addMangaDialog.component";
-import Searchbar from "./searchBar.component";
 import MangaContainer from "./mangaContainer.component";
 
-const page = async ({ searchParams }: SearchParams) => {
+const page = async () => {
   const session = await getSafeSessionServer();
 
   if (!session) {
@@ -16,8 +12,7 @@ const page = async ({ searchParams }: SearchParams) => {
   }
 
   const searchFormdata = new FormData();
-  searchFormdata.set("search", String(searchParams?.search || ""));
-  const safeMangas = await searchMangasByUser(searchFormdata);
+  const safeMangas = await getMangasByUser(searchFormdata);
 
   return (
     <>

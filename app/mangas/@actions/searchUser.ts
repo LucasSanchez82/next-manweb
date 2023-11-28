@@ -3,7 +3,7 @@
 import { Manga } from "@/lib/types";
 import { getSafeSessionServer, prisma } from "@/lib/utils";
 
-export const searchMangasByUser = async (
+export const getMangasByUser = async (
   formdata: FormData
 ): Promise<
   { success: true; mangas: Manga[] } | { success: false; error: string }
@@ -17,13 +17,14 @@ export const searchMangasByUser = async (
             email: session.user.email,
           },
           title: {
-            contains: String(mangaTitle),
+            contains: String(mangaTitle || ""),
           },
         },
       },
       orderBy: {
         id: "desc",
       },
+      take: 15,
     });
 
     return { success: true, mangas };
