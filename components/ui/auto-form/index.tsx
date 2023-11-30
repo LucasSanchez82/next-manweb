@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { FormHTMLAttributes } from "react";
 import { z } from "zod";
 import { Form } from "../form";
 import { DefaultValues, useForm } from "react-hook-form";
@@ -29,6 +29,7 @@ function AutoForm<SchemaType extends ZodObjectOrWrapped>({
   fieldConfig,
   children,
   className,
+  action,
 }: {
   formSchema: SchemaType;
   values?: Partial<z.infer<SchemaType>>;
@@ -38,6 +39,7 @@ function AutoForm<SchemaType extends ZodObjectOrWrapped>({
   fieldConfig?: FieldConfig<z.infer<SchemaType>>;
   children?: React.ReactNode;
   className?: string;
+  action?: string | ((formData: FormData) => void) | undefined;
 }) {
   const objectFormSchema = getObjectFormSchema(formSchema);
   const defaultValues: DefaultValues<z.infer<typeof objectFormSchema>> =
@@ -59,6 +61,7 @@ function AutoForm<SchemaType extends ZodObjectOrWrapped>({
   return (
     <Form {...form}>
       <form
+      action={action}
         onSubmit={(e) => {
           form.handleSubmit(onSubmit)(e);
         }}

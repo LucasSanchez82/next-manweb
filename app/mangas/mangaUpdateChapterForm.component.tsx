@@ -1,9 +1,8 @@
 "use client";
-import { Input } from "@/components/ui/input";
-import React, { useTransition } from "react";
-import { updateManga } from "./@actions/update";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useFormStatus } from "react-dom";
+import { updateManga } from "./@actions/update";
 
 const SubmitButton = () => {
   const { pending } = useFormStatus();
