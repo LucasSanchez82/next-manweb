@@ -1,11 +1,10 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { toast } from "@/components/ui/use-toast";
+import { Dispatch, SetStateAction } from "react";
 import { useFormStatus } from "react-dom";
 import { editManga } from "./@actions/editManga";
-import { Dispatch, SetStateAction, SyntheticEvent } from "react";
-import { toast } from "@/components/ui/use-toast";
-import { set } from "date-fns";
 
 type editFormType = {
   title: string;
@@ -19,7 +18,7 @@ const SubmitButton = () => {
   const { pending } = useFormStatus();
   return (
     <Button type="submit" aria-disabled={pending}>
-      {pending ? "Xhargement..." : "Mettre a jour"}
+      {pending ? "Chargement..." : "Mettre a jour"}
     </Button>
   );
 };

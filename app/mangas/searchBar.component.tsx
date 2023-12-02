@@ -3,14 +3,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { Manga } from "@/lib/types";
-import { useSearchParams } from "next/navigation";
 import { SyntheticEvent, useState } from "react";
 import { getMangasByUser } from "./@actions/searchUser";
+import { useSearchParams } from "next/navigation";
 
 const Searchbar = ({
   setMangas,
+  page = 1,
 }: {
   setMangas: React.Dispatch<React.SetStateAction<Manga[]>>;
+  page: number;
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
@@ -25,6 +27,7 @@ const Searchbar = ({
         "search",
         String(formDataValue.get("search")).trim().toLowerCase()
       );
+      formDataValue.set("page", String(page));
 
       if (
         formDataValue.get("search") != currSearch.trim().toLocaleLowerCase()
@@ -32,6 +35,7 @@ const Searchbar = ({
         setCurrSearch(String(formDataValue.get("search")));
         setIsLoading(true);
         const safeMangas = await getMangasByUser(formDataValue);
+
         if (safeMangas.success) {
           setMangas(safeMangas.mangas);
         } else {
@@ -52,8 +56,7 @@ const Searchbar = ({
       className="flex w-full max-w-sm items-center space-x-2 m-auto"
     >
       <Input type="search" name="search" placeholder="One piece..." />
-      <Button type="submit">🔍{isLoading ? "✅" : "❌"}</Button>
-      <h2>curr : {currSearch}</h2>
+      <Button type="submit">{isLoading ? "..." : "🔍"}</Button>
     </form>
   );
 };
