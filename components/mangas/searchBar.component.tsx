@@ -3,18 +3,20 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { Manga } from "@/lib/types";
-import { SyntheticEvent, useState } from "react";
+import { Dispatch, SetStateAction, SyntheticEvent, useState } from "react";
 import { getMangasByUser } from "./@actions/searchUser";
 import { useSearchParams } from "next/navigation";
 
 const Searchbar = ({
   setMangas,
   page = 1,
-  nbAffiche
+  nbAffiche,
+  setNbTotalPages
 }: {
   setMangas: React.Dispatch<React.SetStateAction<Manga[]>>;
   page: number;
   nbAffiche: number,
+  setNbTotalPages: Dispatch<SetStateAction<number>>
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
@@ -32,10 +34,13 @@ const Searchbar = ({
       ) {
         setCurrSearch(String(formDataValue.get("search")));
         setIsLoading(true);
-        const safeMangas = await getMangasByUser({searchTitle: searchTitle, page: page, nbAffiche});
+        const safeMangas = await getMangasByUser({searchTitle: searchTitle, page: page, nbAffiche, returnNbPages: true});
 
         if (safeMangas.success) {
           setMangas(safeMangas.mangas);
+          if("nbTotalPages" in safeMangas){
+            setNbTotalPages(safeMangas.nbTotalPages);
+          }
         } else {
           toast({
             variant: "destructive",

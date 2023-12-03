@@ -6,7 +6,7 @@ import MangaContainer from "../../components/mangas/mangaContainer.component";
 
 const page = async () => {
   const session = await getSafeSessionServer();
-  const nbAffiche = Number(process.env.MANGAS_NB_AFFICHE) || 3;
+  const nbAffiche = Number(process.env.MANGAS_NB_AFFICHE) || 5;
   const nbMangas = await prisma.manga.count({where: {userId: session.user.userId}});
   const nbTotalPages = Math.round(nbMangas / nbAffiche);
 

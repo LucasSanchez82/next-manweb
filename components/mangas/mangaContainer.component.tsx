@@ -12,14 +12,14 @@ import NavigationBetweenpagesBar from "./navigationBetweenpagesBar.component";
 const MangaContainer = ({
   mangas: iniMangas,
   nbAffiche,
-  nbTotalPages,
+  nbTotalPages: nbTotalPagesInitial,
 }: {
   mangas: Manga[];
   nbAffiche: number;
   nbTotalPages: number;
 }) => {
   const searchParams = useSearchParams();
-
+  const [nbTotalPages, setNbTotalPages] = useState(nbTotalPagesInitial)
   const router = useRouter();
   const [mangas, setMangas] = useState<Manga[]>(iniMangas);
   const [page, setPage] = useState(1);
@@ -45,9 +45,13 @@ const MangaContainer = ({
     };
     processMangasByPage();
   }, [page]);
+  useEffect(() => {
+    console.log(nbTotalPages);
+    
+  }, [nbTotalPages])
   return (
     <>
-      <Searchbar nbAffiche={nbAffiche} setMangas={setMangas} page={page} />
+      <Searchbar setNbTotalPages={setNbTotalPages} nbAffiche={nbAffiche} setMangas={setMangas} page={page} />
       <Suspense>
         <div className="flex flex-row flex-wrap justify-around m-auto">
           {mangas.map((el) => (
