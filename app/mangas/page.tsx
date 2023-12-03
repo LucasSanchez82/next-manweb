@@ -1,8 +1,8 @@
 import { getSafeSessionServer } from "@/lib/utils";
 import { redirect } from "next/navigation";
-import { getMangasByUser } from "./@actions/searchUser";
-import { AddMangaDialog } from "./addMangaDialog.component";
-import MangaContainer from "./mangaContainer.component";
+import { getMangasByUser } from "../../components/mangas/@actions/searchUser";
+import { AddMangaDialog } from "../../components/mangas/addMangaDialog.component";
+import MangaContainer from "../../components/mangas/mangaContainer.component";
 
 const page = async () => {
   const session = await getSafeSessionServer();
