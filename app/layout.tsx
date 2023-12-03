@@ -25,7 +25,7 @@ export default async function RootLayout({
   const session = await getServerSession(authOptions);
   return (
     <html lang="fr">
-      <body className={inter.className}>
+      <body className={inter.className + 'flex flex-col justify-between items-end min-h-[100vh]'}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

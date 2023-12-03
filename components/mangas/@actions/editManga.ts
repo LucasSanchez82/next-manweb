@@ -13,7 +13,7 @@ export const editManga = async (formdata: FormData) => {
     
     if(safeparse.success){
       const session = await getSafeSessionServer();
-      await prisma.manga.update({data: {...safeparse.data}, where: {id: safeparse.data.id, userId: session.user.userId}})
+      return await prisma.manga.update({data: {...safeparse.data}, where: {id: safeparse.data.id, userId: session.user.userId}})
     }else {
       return {error: safeparse.error.errors.map(el => el.message)};
     }

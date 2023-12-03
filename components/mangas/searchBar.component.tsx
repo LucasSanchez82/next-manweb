@@ -10,9 +10,11 @@ import { useSearchParams } from "next/navigation";
 const Searchbar = ({
   setMangas,
   page = 1,
+  nbAffiche
 }: {
   setMangas: React.Dispatch<React.SetStateAction<Manga[]>>;
   page: number;
+  nbAffiche: number,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
@@ -23,18 +25,14 @@ const Searchbar = ({
     const target = event.target;
     if (target instanceof HTMLFormElement) {
       const formDataValue = new FormData(target);
-      formDataValue.set(
-        "search",
-        String(formDataValue.get("search")).trim().toLowerCase()
-      );
-      formDataValue.set("page", String(page));
+      const searchTitle = String(formDataValue.get("search")).trim().toLowerCase();
 
       if (
         formDataValue.get("search") != currSearch.trim().toLocaleLowerCase()
       ) {
         setCurrSearch(String(formDataValue.get("search")));
         setIsLoading(true);
-        const safeMangas = await getMangasByUser(formDataValue);
+        const safeMangas = await getMangasByUser({searchTitle: searchTitle, page: page, nbAffiche});
 
         if (safeMangas.success) {
           setMangas(safeMangas.mangas);

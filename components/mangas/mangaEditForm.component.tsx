@@ -2,6 +2,8 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
+import { mangaSchema } from "@/schemas/mangasSchemas";
+import { Manga } from "@/lib/types";
 import { Dispatch, SetStateAction } from "react";
 import { useFormStatus } from "react-dom";
 import { editManga } from "./@actions/editManga";
@@ -22,8 +24,7 @@ const SubmitButton = () => {
     </Button>
   );
 };
-export const EditForm = ({ linkImage, linkManga, title, id, setIsEdit }: editFormType) => {
-  const classNamesLabel = "mb-4";
+export const EditForm = ({ linkImage, linkManga, title, id, setIsEdit, setManga }: editFormType & {setManga: Dispatch<SetStateAction<Manga>>}) => {
   const handleSubmit = async(formdata: FormData) => {
     if(!setIsEdit) {
       toast({
@@ -34,9 +35,12 @@ export const EditForm = ({ linkImage, linkManga, title, id, setIsEdit }: editFor
     }
     try{
       const res = await editManga(formdata);
-      console.log(res);
+      const safeManga = mangaSchema.safeParse(res);
+      if(safeManga.success) {
+        setManga((curr) => ({...curr, ...safeManga.data}));
+      }
       
-      if(res?.error) {
+      if('error' in res && res.error) {
         toast({
           title: res.error.join('\n'),
           variant: 'destructive'

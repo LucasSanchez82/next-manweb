@@ -13,9 +13,9 @@ import { Edit, X } from "lucide-react";
 import NextImage from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { MangaUpdateForm } from "./mangaUpdateChapterForm.component";
+import { useEffect, useState } from "react";
 import { EditForm } from "./mangaEditForm.component";
+import { MangaUpdateForm } from "./mangaUpdateChapterForm.component";
 
 export function MangaCard({ title, linkImage, linkManga, chapter, id }: Manga) {
   const [manga, setManga] = useState<Manga>({
@@ -25,13 +25,16 @@ export function MangaCard({ title, linkImage, linkManga, chapter, id }: Manga) {
     chapter,
     id,
   });
-  const router = useRouter();
+  const { refresh } = useRouter();
   const [isErrorImage, setIsErrorImage] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
 
+  useEffect(() => {
+    console.log("useeffect manga");
+    console.log(manga);
+  }, [manga]);
 
   const handleDelete = async () => {
-    //suppression
     const isConfirmed = confirm("sur de vouloir le supprimer definitevement ?");
 
     if (!isConfirmed) return;
@@ -41,7 +44,7 @@ export function MangaCard({ title, linkImage, linkManga, chapter, id }: Manga) {
     });
     if (response.ok) {
       const res = await response.json();
-      router.refresh();
+      refresh();
     } else {
       console.error("internal servor error");
     }
@@ -50,28 +53,35 @@ export function MangaCard({ title, linkImage, linkManga, chapter, id }: Manga) {
   if (isEdit) {
     return (
       <Card className="w-[350px] m-5 min-h-[175px] flex flex-col justify-between items-center relative overflow-hidden">
-          <CardHeader className="bg-secondary p-1 m-1 rounded">
-            <CardTitle className="text-center">
-              Mettre a jour
-            </CardTitle>
-            <Button
-              onClick={() => setIsEdit(false)}
-              className="w-10 h-10 p-0 absolute top-3 left-3 bg-primary"
-            >
-              <X />
-            </Button>
-          </CardHeader>
-          <CardContent className="">
-           <EditForm {...{title, linkImage, linkManga, id, setIsEdit}} />
-          </CardContent>
+        <CardHeader className="bg-secondary p-1 m-1 rounded">
+          <CardTitle className="text-center">Mettre a jour</CardTitle>
+          <Button
+            onClick={() => setIsEdit(false)}
+            className="w-10 h-10 p-0 absolute top-3 left-3 bg-primary"
+          >
+            <X />
+          </Button>
+        </CardHeader>
+        <CardContent className="">
+          <EditForm
+            {...{
+              title: manga.title,
+              linkImage: manga.linkImage,
+              linkManga: manga.linkManga,
+              id: manga.id,
+              setIsEdit,
+            }}
+            setManga={setManga}
+          />
+        </CardContent>
       </Card>
     );
   } else {
     return (
       <Card className="w-[350px] m-5 min-h-[175px] flex flex-col justify-between items-center relative overflow-hidden">
         <CardHeader className="z-10 bg-secondary p-1 m-1 rounded">
-          <Link href={linkManga} target={"_blank"}>
-            <CardTitle className="text-center">{title}</CardTitle>
+          <Link href={manga.linkManga} target={"_blank"}>
+            <CardTitle className="text-center p-1 pr-2 pl-2">{manga.title}</CardTitle>
           </Link>
           <Button
             onClick={handleDelete}
@@ -97,13 +107,13 @@ export function MangaCard({ title, linkImage, linkManga, chapter, id }: Manga) {
           ) : (
             <img
               className={"rounded object-cover w-full h-full "}
-              src={linkImage}
+              src={manga.linkImage}
               onError={() => setIsErrorImage(true)}
             />
           )}
         </CardContent>
         <CardFooter className="w-100 z-10">
-          <MangaUpdateForm chapter={chapter} idManga={manga.id} />
+          <MangaUpdateForm chapter={manga.chapter} idManga={manga.id} />
         </CardFooter>
       </Card>
     );
