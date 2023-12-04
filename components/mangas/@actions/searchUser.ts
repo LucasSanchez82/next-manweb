@@ -2,7 +2,6 @@
 
 import { Manga } from "@/lib/types";
 import { getSafeSessionServer, prisma } from "@/lib/utils";
-import { Dispatch, SetStateAction } from "react";
 
 export const getMangasByUser = async ({
   searchTitle,
@@ -45,7 +44,8 @@ export const getMangasByUser = async ({
         },
       },
     });
-    const nbTotalPages = Math.round(nbMangas / nbAffiche);
+    
+    const nbTotalPages = Math.ceil(nbMangas / nbAffiche);
     return { success: true, mangas, nbTotalPages };
   } else {
     return { success: true, mangas };

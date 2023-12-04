@@ -48,6 +48,13 @@ const Searchbar = ({
       ) {
         setCurrSearch(String(formDataValue.get("search")));
         setIsLoading(true);
+        console.log("options", {
+          searchTitle: searchTitle,
+          page: page,
+          nbAffiche,
+          returnNbPages: true,
+        });
+
         const safeMangas = await getMangasByUser({
           searchTitle: searchTitle,
           page: page,
@@ -56,6 +63,8 @@ const Searchbar = ({
         });
 
         if (safeMangas.success) {
+          console.log(safeMangas);
+
           setMangas(safeMangas.mangas);
           if ("nbTotalPages" in safeMangas) {
             setNbTotalPages(safeMangas.nbTotalPages);
