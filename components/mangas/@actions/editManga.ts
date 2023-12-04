@@ -1,7 +1,7 @@
 "use server";
 
 import { getSafeSessionServer, prisma } from "@/lib/utils";
-import { editMangaSchema } from "@/schemas/mangasSchemas";
+import { mangaSchema } from "@/schemas/mangasSchemas";
 
 
 
@@ -9,7 +9,7 @@ export const editManga = async (formdata: FormData) => {
     const formObject = Object.fromEntries(formdata);
     console.log(formObject);
     
-    const safeparse = editMangaSchema.safeParse(formObject);
+    const safeparse = mangaSchema.safeParse(formObject);
     
     if(safeparse.success){
       const session = await getSafeSessionServer();

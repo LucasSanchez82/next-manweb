@@ -1,13 +1,11 @@
 "use client";
-import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 import { Manga } from "@/lib/types";
-import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { getMangasByUser } from "./@actions/searchUser";
 import { MangaCard } from "./mangaCard.component";
-import Searchbar from "./searchBar.component";
 import NavigationBetweenpagesBar from "./navigationBetweenpagesBar.component";
+import Searchbar from "./searchBar.component";
 
 const MangaContainer = ({
   mangas: iniMangas,
@@ -18,17 +16,15 @@ const MangaContainer = ({
   nbAffiche: number;
   nbTotalPages: number;
 }) => {
-  const searchParams = useSearchParams();
-  const [nbTotalPages, setNbTotalPages] = useState(nbTotalPagesInitial)
-  const router = useRouter();
+  const [nbTotalPages, setNbTotalPages] = useState(nbTotalPagesInitial);
   const [mangas, setMangas] = useState<Manga[]>(iniMangas);
   const [page, setPage] = useState(1);
+  const [currSearch, setCurrSearch] = useState("");
 
   useEffect(() => {
-    // router.push(`?page=${page}`);
     const processMangasByPage = async () => {
       const safeMangas = await getMangasByUser({
-        searchTitle: "",
+        searchTitle: currSearch,
         page: page,
         nbAffiche,
       });
@@ -45,13 +41,16 @@ const MangaContainer = ({
     };
     processMangasByPage();
   }, [page]);
-  useEffect(() => {
-    console.log(nbTotalPages);
-    
-  }, [nbTotalPages])
+
   return (
     <>
-      <Searchbar setNbTotalPages={setNbTotalPages} nbAffiche={nbAffiche} setMangas={setMangas} page={page} />
+      <Searchbar
+        setNbTotalPages={setNbTotalPages}
+        nbAffiche={nbAffiche}
+        setMangas={setMangas}
+        useSearch={{currSearch, setCurrSearch}}
+        usePage={{page, setPage}}
+      />
       <Suspense>
         <div className="flex flex-row flex-wrap justify-around m-auto">
           {mangas.map((el) => (
@@ -60,8 +59,7 @@ const MangaContainer = ({
         </div>
         {!(nbTotalPages <= 1) && (
           <NavigationBetweenpagesBar
-            {...{ nbTotalPages, page, usePage: { page, setPage } }}
-            // usePage={{ page, setPage }}
+            {...{ nbTotalPages, usePage: { page, setPage } }}
           />
         )}
       </Suspense>

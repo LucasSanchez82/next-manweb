@@ -9,37 +9,57 @@ import { useSearchParams } from "next/navigation";
 
 const Searchbar = ({
   setMangas,
-  page = 1,
+  usePage,
   nbAffiche,
-  setNbTotalPages
+  setNbTotalPages,
+  useSearch,
 }: {
   setMangas: React.Dispatch<React.SetStateAction<Manga[]>>;
-  page: number;
-  nbAffiche: number,
-  setNbTotalPages: Dispatch<SetStateAction<number>>
+  usePage: { page: number; setPage: Dispatch<SetStateAction<number>> };
+  nbAffiche: number;
+  setNbTotalPages: Dispatch<SetStateAction<number>>;
+  useSearch: {
+    currSearch: string;
+    setCurrSearch: Dispatch<SetStateAction<string>>;
+  };
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
-  const [currSearch, setCurrSearch] = useState("");
+  const { currSearch, setCurrSearch } = useSearch;
+  const { page, setPage } = usePage;
 
   const handleSubmit = async (event: SyntheticEvent) => {
     event.preventDefault();
     const target = event.target;
     if (target instanceof HTMLFormElement) {
+      const clearInputValue = () => {
+        const searchInput = target.querySelector("input[name=search]");
+        if (searchInput instanceof HTMLInputElement) {
+          searchInput.value = "";
+        }
+      };
       const formDataValue = new FormData(target);
-      const searchTitle = String(formDataValue.get("search")).trim().toLowerCase();
+      const searchTitle = String(formDataValue.get("search"))
+        .trim()
+        .toLowerCase();
 
       if (
         formDataValue.get("search") != currSearch.trim().toLocaleLowerCase()
       ) {
         setCurrSearch(String(formDataValue.get("search")));
         setIsLoading(true);
-        const safeMangas = await getMangasByUser({searchTitle: searchTitle, page: page, nbAffiche, returnNbPages: true});
+        const safeMangas = await getMangasByUser({
+          searchTitle: searchTitle,
+          page: page,
+          nbAffiche,
+          returnNbPages: true,
+        });
 
         if (safeMangas.success) {
           setMangas(safeMangas.mangas);
-          if("nbTotalPages" in safeMangas){
+          if ("nbTotalPages" in safeMangas) {
             setNbTotalPages(safeMangas.nbTotalPages);
+            setPage(1);
           }
         } else {
           toast({
@@ -51,6 +71,7 @@ const Searchbar = ({
         }
         setIsLoading(false);
       }
+      clearInputValue();
     }
   };
   return (

@@ -5,7 +5,6 @@ const NavigationBetweenpagesBar = ({
   usePage,
   nbTotalPages,
 }: {
-  page: number;
   nbTotalPages: number;
   usePage: { page: number; setPage: Dispatch<SetStateAction<number>> };
 }) => {
