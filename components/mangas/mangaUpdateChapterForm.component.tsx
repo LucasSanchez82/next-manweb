@@ -7,10 +7,6 @@ import { Loader2 } from "lucide-react";
 
 const SubmitButton = () => {
   const { pending,  } = useFormStatus();
-  if(!pending) {
-    console.log('pend');
-    
-  }
   return (
     <Button type="submit"  aria-disabled={pending} className="w-1/4">
       {pending ? <Loader2 className="loader-2 " /> : "Update"}

@@ -26,3 +26,7 @@ export const newMangaSchema = mangaBaseSchema.extend({
 export const mangaSchema = newMangaSchema.extend({
   id: z.coerce.number(),
 });
+
+export const editMangaSchema = mangaBaseSchema.extend({
+  id: z.coerce.number(),
+});

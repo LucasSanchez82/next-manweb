@@ -12,12 +12,11 @@ import { Manga } from "@/lib/types";
 import { Edit, X } from "lucide-react";
 import NextImage from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { EditForm } from "./mangaEditForm.component";
 import { MangaUpdateForm } from "./mangaUpdateChapterForm.component";
 
-export function MangaCard({ title, linkImage, linkManga, chapter, id }: Manga) {
+export function MangaCard({ title, linkImage, linkManga, chapter, id, refreshMangas }: Manga & {refreshMangas: () => Promise<void>}) {
   const [manga, setManga] = useState<Manga>({
     title,
     linkImage,
@@ -25,14 +24,8 @@ export function MangaCard({ title, linkImage, linkManga, chapter, id }: Manga) {
     chapter,
     id,
   });
-  const { refresh } = useRouter();
   const [isErrorImage, setIsErrorImage] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
-
-  useEffect(() => {
-    console.log("useeffect manga");
-    console.log(manga);
-  }, [manga]);
 
   const handleDelete = async () => {
     const isConfirmed = confirm("sur de vouloir le supprimer definitevement ?");
@@ -44,7 +37,7 @@ export function MangaCard({ title, linkImage, linkManga, chapter, id }: Manga) {
     });
     if (response.ok) {
       const res = await response.json();
-      refresh();
+      await refreshMangas();
     } else {
       console.error("internal servor error");
     }

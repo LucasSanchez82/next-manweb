@@ -3,7 +3,6 @@
 import { NewManga } from "@/lib/types";
 import { getSafeSessionServer, prisma } from "@/lib/utils";
 import { newMangaSchema } from "@/schemas/mangasSchemas";
-import { NextResponse } from "next/server";
 
 const addMangaProcess = async (newManga: unknown) => {
   const safeBody = newMangaSchema.safeParse(newManga);
@@ -17,24 +16,21 @@ const addMangaProcess = async (newManga: unknown) => {
           userId: session?.user?.userId!,
         },
       });
-      return NextResponse.json(createdManga, { status: 200 });
+      return { message: createdManga };
     } catch (error) {
-      return NextResponse.json({ error: error }, { status: 500 });
+      return { error };
     }
   } else {
-    return NextResponse.json(
-      { error: safeBody.error.message },
-      { status: 401 }
-    );
+    return { error: safeBody.error.message };
   }
 };
 
 const addManga = async (newMangaToAdd: FormData | NewManga) => {
   if (newMangaToAdd instanceof FormData) {
     const newManga = Object.fromEntries(newMangaToAdd);
-    return await addMangaProcess(newManga);
+    return addMangaProcess(newManga);
   } else {
-    return await addMangaProcess(newMangaToAdd);
+    return addMangaProcess(newMangaToAdd);
   }
 };
 

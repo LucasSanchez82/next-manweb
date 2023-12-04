@@ -61,9 +61,9 @@ function AutoForm<SchemaType extends ZodObjectOrWrapped>({
   return (
     <Form {...form}>
       <form
-      action={action}
+        action={action}
         onSubmit={(e) => {
-          form.handleSubmit(onSubmit)(e);
+          onSubmitProp && form.handleSubmit(onSubmit)(e);
         }}
         onChange={() => {
           const values = form.getValues();
