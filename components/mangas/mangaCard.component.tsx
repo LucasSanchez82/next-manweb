@@ -12,11 +12,20 @@ import { Manga } from "@/lib/types";
 import { Edit, X } from "lucide-react";
 import NextImage from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { SyntheticEvent, useState } from "react";
 import { EditForm } from "./mangaEditForm.component";
 import { MangaUpdateForm } from "./mangaUpdateChapterForm.component";
+import deleteManga from "./@actions/deleteManga";
+import { useToast } from "../ui/use-toast";
 
-export function MangaCard({ title, linkImage, linkManga, chapter, id, refreshMangas }: Manga & {refreshMangas: () => Promise<void>}) {
+export function MangaCard({
+  title,
+  linkImage,
+  linkManga,
+  chapter,
+  id,
+  refreshMangas,
+}: Manga & { refreshMangas: () => Promise<void> }) {
   const [manga, setManga] = useState<Manga>({
     title,
     linkImage,
@@ -26,20 +35,24 @@ export function MangaCard({ title, linkImage, linkManga, chapter, id, refreshMan
   });
   const [isErrorImage, setIsErrorImage] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
+  const { toast } = useToast();
 
-  const handleDelete = async () => {
+  const handleDelete = async (event: SyntheticEvent) => {
+    event.preventDefault();
     const isConfirmed = confirm("sur de vouloir le supprimer definitevement ?");
 
     if (!isConfirmed) return;
-    const response = await fetch("/api/mangas", {
-      method: "DELETE",
-      body: JSON.stringify(manga),
-    });
-    if (response.ok) {
-      const res = await response.json();
+    console.log("manga id ", manga.id);
+
+    const response = await deleteManga(manga.id);
+    if (response.success) {
+      console.log(response.message);
+      
       await refreshMangas();
     } else {
-      console.error("internal servor error");
+      console.log(response.error);
+      
+      console.log("erreur serveur interne");
     }
   };
 
@@ -74,19 +87,24 @@ export function MangaCard({ title, linkImage, linkManga, chapter, id, refreshMan
       <Card className="w-[350px] m-5 min-h-[175px] flex flex-col justify-between items-center relative overflow-hidden">
         <CardHeader className="z-10 bg-secondary p-1 m-1 rounded">
           <Link href={manga.linkManga} target={"_blank"}>
-            <CardTitle className="text-center p-1 pr-2 pl-2">{manga.title}</CardTitle>
+            <CardTitle className="text-center p-1 pr-2 pl-2">
+              {manga.title}
+            </CardTitle>
           </Link>
-          <Button
-            onClick={handleDelete}
-            className="w-10 h-10 p-0 bg-transparent absolute top-3 right-3"
-          >
-            <NextImage //delete Icon
-              src="/delete-icon.svg"
-              alt="Icon of a delete button"
-              width={40}
-              height={40}
-            />
-          </Button>
+          <form onSubmit={handleDelete}>
+            <Button
+            type="submit"
+              // onClick={handleDelete}
+              className="w-10 h-10 p-0 bg-transparent absolute top-3 right-3"
+            >
+              <NextImage //delete Icon
+                src="/delete-icon.svg"
+                alt="Icon of a delete button"
+                width={40}
+                height={40}
+              />
+            </Button>
+          </form>
           <Button
             onClick={() => setIsEdit(true)}
             className="w-10 h-10 p-0 absolute top-3 left-3 bg-primary"

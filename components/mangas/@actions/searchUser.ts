@@ -25,6 +25,7 @@ export const getMangasByUser = async ({
       title: {
         contains: String(searchTitle || ""),
       },
+      isDeleted: false,
     },
     orderBy: {
       id: "desc",

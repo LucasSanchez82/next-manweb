@@ -6,6 +6,7 @@ import { Manga } from "@/lib/types";
 import { Dispatch, SetStateAction, SyntheticEvent, useState } from "react";
 import { getMangasByUser } from "./@actions/searchUser";
 import { useSearchParams } from "next/navigation";
+import { OrderSearchDropdown } from "./orderSearchDropdown.component";
 
 const Searchbar = ({
   setMangas,
@@ -90,6 +91,7 @@ const Searchbar = ({
     >
       <Input type="search" name="search" placeholder="One piece..." />
       <Button type="submit">{isLoading ? "..." : "🔍"}</Button>
+      <OrderSearchDropdown />
     </form>
   );
 };

@@ -72,7 +72,6 @@ const MangaContainer = ({
         useSearch={{ currSearch, setCurrSearch }}
         usePage={{ page, setPage }}
       />
-          <h1>nbpages : {nbTotalPages}</h1>
       <Suspense>
         <div className="flex flex-row flex-wrap justify-around m-auto">
           {isLoading && <Loader2 className="loader-2 m-5 w-full" />}
