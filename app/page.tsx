@@ -7,6 +7,7 @@ export default async function Home() {
   if (session) {
     redirect("/mangas");
   }
+
   return (
     <main className="flex flex-col justify-center items-center text-center">
       <h1 className="bg-green-400 rounded w-2/4 m-3 p-1">Manweb</h1>

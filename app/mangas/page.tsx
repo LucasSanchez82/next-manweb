@@ -1,6 +1,7 @@
+import { getPage } from "@/components/mangas/@actions/cookies";
 import { getSafeSessionServer, prisma } from "@/lib/utils";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { getMangasByUser } from "../../components/mangas/@actions/searchUser";
 import MangaContainer from "../../components/mangas/mangaContainer.component";
 
 const page = async ({
@@ -12,47 +13,45 @@ const page = async ({
   if (!session) {
     redirect("/");
   }
-  const nbAffiche = Number(process.env.MANGAS_NB_AFFICHE) || 5;
+  const cookieSore = cookies();
+  const searchedValue = String(cookieSore.get("searchedTitle")?.value || "");
 
-  // router.
-  // console.log("url", url.searchParams);
-
-  const {search, page}= searchParams;
+  const nbAffiche = Number(process.env.MANGAS_NB_AFFICHE || 5);
+  const currPage = getPage();
   const nbMangas = await prisma.manga.count({
-    where: { userId: session.user.userId },
+    where: {
+      userId: session.user.userId,
+      title: {
+        contains: searchedValue,
+      },
+      isDeleted: false,
+    },
   });
-  const nbTotalPages = Math.round(nbMangas / nbAffiche);
 
-  // const safeMangas = await getMangasByUser({ searchTitle: "", nbAffiche });
+  const nbTotalPages = Math.round(nbMangas / nbAffiche);
   const mangas = await prisma.manga.findMany({
     where: {
-      user: {
-        email: session.user.email,
-      },
+      userId: session.user.userId,
       title: {
-        contains: String(search || ""),
+        contains: searchedValue,
       },
       isDeleted: false,
     },
     orderBy: {
       id: "desc",
     },
-    // skip: nbAffiche * (Number(page) - 1),
     take: nbAffiche,
+    skip: nbAffiche * (currPage - 1),
   });
 
   return (
     <main className="flex flex-col justify-center items-center text-center h-full">
-      {/* {safeMangas.success ? ( */}
       <MangaContainer
         nbTotalPages={nbTotalPages}
         nbAffiche={nbAffiche}
         mangas={mangas}
+        page={currPage}
       />
-      {/* )  */}
-      {/* : (
-        safeMangas.error */}
-      {/* )} */}
     </main>
   );
 };

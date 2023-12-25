@@ -3,6 +3,7 @@
 import { NewManga } from "@/lib/types";
 import { getSafeSessionServer, prisma } from "@/lib/utils";
 import { newMangaSchema } from "@/schemas/mangasSchemas";
+import { revalidatePath } from "next/cache";
 
 const addMangaProcess = async (newManga: unknown) => {
   const safeBody = newMangaSchema.safeParse(newManga);
@@ -28,8 +29,10 @@ const addMangaProcess = async (newManga: unknown) => {
 const addManga = async (newMangaToAdd: FormData | NewManga) => {
   if (newMangaToAdd instanceof FormData) {
     const newManga = Object.fromEntries(newMangaToAdd);
+    revalidatePath("/mangas");
     return addMangaProcess(newManga);
   } else {
+    revalidatePath("/mangas");
     return addMangaProcess(newMangaToAdd);
   }
 };

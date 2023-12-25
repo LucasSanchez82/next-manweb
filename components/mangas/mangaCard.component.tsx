@@ -13,19 +13,12 @@ import { Edit, X } from "lucide-react";
 import NextImage from "next/image";
 import Link from "next/link";
 import { SyntheticEvent, useState } from "react";
+import { useToast } from "../ui/use-toast";
+import deleteManga from "./@actions/deleteManga";
 import { EditForm } from "./mangaEditForm.component";
 import { MangaUpdateForm } from "./mangaUpdateChapterForm.component";
-import deleteManga from "./@actions/deleteManga";
-import { useToast } from "../ui/use-toast";
 
-export function MangaCard({
-  title,
-  linkImage,
-  linkManga,
-  chapter,
-  id,
-  refreshMangas,
-}: Manga & { refreshMangas: () => Promise<void> }) {
+export function MangaCard({ title, linkImage, linkManga, chapter, id }: Manga) {
   const [manga, setManga] = useState<Manga>({
     title,
     linkImage,
@@ -39,20 +32,15 @@ export function MangaCard({
 
   const handleDelete = async (event: SyntheticEvent) => {
     event.preventDefault();
-    const isConfirmed = confirm("sur de vouloir le supprimer definitevement ?");
+    // ? really want to delete ?
+    // const isConfirmed = confirm("sur de vouloir le supprimer definitevement ?");
 
-    if (!isConfirmed) return;
-    console.log("manga id ", manga.id);
+    // if (!isConfirmed) return;
+    // console.log("manga id ", manga.id);
 
     const response = await deleteManga(manga.id);
-    if (response.success) {
-      console.log(response.message);
-      
-      await refreshMangas();
-    } else {
-      console.log(response.error);
-      
-      console.log("erreur serveur interne");
+    if (!response.success) {
+      console.log("erreur serveur interne lors de la suppression");
     }
   };
 
@@ -93,7 +81,7 @@ export function MangaCard({
           </Link>
           <form onSubmit={handleDelete}>
             <Button
-            type="submit"
+              type="submit"
               // onClick={handleDelete}
               className="w-10 h-10 p-0 bg-transparent absolute top-3 right-3"
             >
@@ -120,6 +108,7 @@ export function MangaCard({
               className={"rounded object-cover w-full h-full "}
               src={manga.linkImage}
               onError={() => setIsErrorImage(true)}
+              alt=""
             />
           )}
         </CardContent>

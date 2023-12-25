@@ -7,11 +7,15 @@ COPY pnpm-lock.yaml ./
 COPY prisma ./prisma/
 COPY .env ./
 
+# RUN mkdir -p .next
+# RUN mkdir -p node_modules
+# RUN chown node:node . node_modules .next
+# RUN chown -R node:node node_modules/
+
 RUN npm install -g pnpm
 RUN pnpm install
-RUN pnpx prisma generate
+RUN pnpm prisma generate
 
-COPY . .
 
 EXPOSE 3000
 

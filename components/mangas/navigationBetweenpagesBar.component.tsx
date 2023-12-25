@@ -1,24 +1,14 @@
 import { Dispatch, SetStateAction } from "react";
 import { Button } from "../ui/button";
+import { decrCookiePage, getPage, incrCookiePage } from "./@actions/cookies";
 
-const NavigationBetweenpagesBar = ({
-  usePage,
-  nbTotalPages,
-}: {
-  nbTotalPages: number;
-  usePage: { page: number; setPage: Dispatch<SetStateAction<number>> };
-}) => {
-  const { page, setPage } = usePage;
-
+const NavigationBetweenPagesBar = ({nbTotalPages, page}: {nbTotalPages: number, page: number}) => {
+  
   const handleClick = (isNext: boolean) => {
     if (isNext) {
-      setPage((curr) => {
-        return curr + 1;
-      });
+      incrCookiePage();
     } else if (page > 1) {
-      setPage((curr) => {
-        return curr - 1;
-      });
+      decrCookiePage();
     }
   };
   return (
@@ -43,4 +33,4 @@ const NavigationBetweenpagesBar = ({
   );
 };
 
-export default NavigationBetweenpagesBar;
+export default NavigationBetweenPagesBar;

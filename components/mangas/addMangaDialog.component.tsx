@@ -10,10 +10,13 @@ import {
 } from "@/components/ui/dialog";
 import { newMangaSchema } from "@/schemas/mangasSchemas";
 import { Loader2, PlusCircle } from "lucide-react";
-import { PropsWithChildren, useState } from "react";
+import { ChangeEvent, PropsWithChildren, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { useToast } from "../ui/use-toast";
 import addManga from "./@actions/addManga";
+import { ScrappMangaParTitre } from "./scrapping/scrappMangaParTitre";
+import { NewManga } from "@/lib/types";
+import { getMangaBySrapTitle } from "@/app/mangas/scrappingProcess";
 
 const SubmitButton = ({ children }: PropsWithChildren) => {
   const { pending } = useFormStatus();
@@ -24,13 +27,36 @@ const SubmitButton = ({ children }: PropsWithChildren) => {
   );
 };
 
-export const AddMangaDialog = ({
-  refreshMangas,
-}: {
-  refreshMangas: () => Promise<void>;
-}) => {
+export const AddMangaDialog = () => {
   const [open, setOpen] = useState(false);
   const { toast } = useToast();
+  let timeOutId: NodeJS.Timeout | null = null;
+
+  const handleChangeValues = (manga: Partial<NewManga>) => {
+    const title = manga.title;
+    if (title && title.length > 2) {
+      if (timeOutId) {
+        clearTimeout(timeOutId);
+        console.log(timeOutId);
+        timeOutId = null;
+      }
+      timeOutId = setTimeout(() => {
+        fetch("/api/mangas/scrapp")
+          .then((response) => {
+            if (response.ok) {
+              return response.json();
+            } else throw new Error("Erreur serveur interne");
+          })
+          .then((result) => {
+            console.log(
+              "🚀 ~ file: addMangaDialog.component.tsx:48 ~ timeOutId=setTimeout ~ result:",
+              result
+            );
+            return;
+          });
+      }, 1000);
+    }
+  };
 
   const handleSubmit = async (values: any) => {
     if (values instanceof FormData) {
@@ -53,7 +79,6 @@ export const AddMangaDialog = ({
             title: "ajoute avec succes",
             variant: "default",
           });
-          await refreshMangas();
           setOpen(false);
         }
       } else {
@@ -81,7 +106,11 @@ export const AddMangaDialog = ({
         <DialogHeader>
           <DialogTitle>Ajouter un manga</DialogTitle>
         </DialogHeader>
-        <AutoForm formSchema={newMangaSchema} action={handleSubmit}>
+        <AutoForm
+          formSchema={newMangaSchema}
+          action={handleSubmit}
+          onValuesChange={handleChangeValues}
+        >
           <SubmitButton>Add Manga</SubmitButton>
         </AutoForm>
       </DialogContent>

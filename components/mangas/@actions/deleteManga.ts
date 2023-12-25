@@ -1,5 +1,6 @@
 "use server";
 import { prisma } from "@/lib/utils";
+import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 
 const deleteManga = async (
@@ -17,6 +18,7 @@ const deleteManga = async (
         id: idManga,
       },
     });
+    revalidatePath('/mangas')
     return { message: "supprime avec succes", success: true };
   } catch (err) {
     console.log("deletedManga Error", err);
