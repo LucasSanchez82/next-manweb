@@ -19,5 +19,24 @@ export const scanMangaDatasSchema = z.object({
       up: z.number(),
     })
   ),
-  genres: z.record(z.string(), z.string()),
+  genre: z.record(z.string(), z.string()),
 });
+export type scanMangaDatasType = {
+  title: {
+    image: string;
+    type: string;
+    nom: string;
+    nom_match: string;
+    url: string;
+    demo: string;
+    genre: number[];
+    statut: number;
+    type_lecture: number;
+    auteur: string;
+    logo: string;
+    l_ch: number;
+    v_l_ch: string;
+    up: number;
+  }[];
+  genre: Record<string, string>;
+};
