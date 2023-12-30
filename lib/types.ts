@@ -10,7 +10,7 @@ export type Manga = {
   linkImage: string;
   linkManga: string;
   chapter: number;
-  id: number;
+  id?: number;
 };
 
 export type SearchParams = {

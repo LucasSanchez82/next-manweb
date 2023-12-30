@@ -10,22 +10,16 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Manga } from "@/lib/types";
 import { Edit, X } from "lucide-react";
-import NextImage from "next/image";
 import Link from "next/link";
 import { SyntheticEvent, useState } from "react";
 import { useToast } from "../ui/use-toast";
 import deleteManga from "./@actions/deleteManga";
 import { EditForm } from "./mangaEditForm.component";
 import { MangaUpdateForm } from "./mangaUpdateChapterForm.component";
+import { DeleteForm } from "./mangasForm/DeleteForm";
 
-export function MangaCard({ title, linkImage, linkManga, chapter, id }: Manga) {
-  const [manga, setManga] = useState<Manga>({
-    title,
-    linkImage,
-    linkManga,
-    chapter,
-    id,
-  });
+export function MangaCard(mangaInitial: Manga) {
+  const [manga, setManga] = useState<Manga>(mangaInitial);
   const [isErrorImage, setIsErrorImage] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const { toast } = useToast();
@@ -37,14 +31,24 @@ export function MangaCard({ title, linkImage, linkManga, chapter, id }: Manga) {
 
     // if (!isConfirmed) return;
     // console.log("manga id ", manga.id);
-
-    const response = await deleteManga(manga.id);
-    if (!response.success) {
-      console.log("erreur serveur interne lors de la suppression");
+    if (manga.id) {
+      const response = await deleteManga(manga.id);
+      if (response.success) {
+        toast({
+          title: "Manga supprimé",
+          variant: "default",
+        });
+      } else console.log("erreur serveur interne lors de la suppression");
+    } else {
+      toast({
+        title: "cette card n'est pas modifiable",
+        variant: "destructive",
+      });
     }
   };
 
-  if (isEdit) {
+  if (isEdit && manga.id) {
+    // be sure that manga is editable
     return (
       <Card className="w-[350px] m-5 min-h-[175px] flex flex-col justify-between items-center relative overflow-hidden">
         <CardHeader className="bg-secondary p-1 m-1 rounded">
@@ -79,26 +83,17 @@ export function MangaCard({ title, linkImage, linkManga, chapter, id }: Manga) {
               {manga.title}
             </CardTitle>
           </Link>
-          <form onSubmit={handleDelete}>
-            <Button
-              type="submit"
-              // onClick={handleDelete}
-              className="w-10 h-10 p-0 bg-transparent absolute top-3 right-3"
-            >
-              <NextImage //delete Icon
-                src="/delete-icon.svg"
-                alt="Icon of a delete button"
-                width={40}
-                height={40}
-              />
-            </Button>
-          </form>
-          <Button
-            onClick={() => setIsEdit(true)}
-            className="w-10 h-10 p-0 absolute top-3 left-3 bg-primary"
-          >
-            <Edit />
-          </Button>
+          {manga.id && (
+            <>
+              <DeleteForm handleDelete={handleDelete} />
+              <Button
+                onClick={() => setIsEdit(true)}
+                className="w-10 h-10 p-0 absolute top-3 left-3 bg-primary"
+              >
+                <Edit />
+              </Button>
+            </>
+          )}
         </CardHeader>
         <CardContent className="absolute m-0 p-0 w-full h-full">
           {isErrorImage ? (
@@ -112,9 +107,11 @@ export function MangaCard({ title, linkImage, linkManga, chapter, id }: Manga) {
             />
           )}
         </CardContent>
-        <CardFooter className="w-100 z-10">
-          <MangaUpdateForm chapter={manga.chapter} idManga={manga.id} />
-        </CardFooter>
+        {manga.id && (
+          <CardFooter className="w-100 z-10">
+            <MangaUpdateForm chapter={manga.chapter} idManga={manga.id} />
+          </CardFooter>
+        )}
       </Card>
     );
   }

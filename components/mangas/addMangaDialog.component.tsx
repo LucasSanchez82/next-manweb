@@ -9,14 +9,25 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { NewManga } from "@/lib/types";
+import { cn } from "@/lib/utils";
 import { newMangaSchema } from "@/schemas/mangasSchemas";
+import {
+  ScanMangaDatasType,
+  ScanMangaTitleType,
+  scanMangaDatasSchema,
+} from "@/schemas/scrappingDatasShemas";
 import { Loader2, PlusCircle } from "lucide-react";
-import { PropsWithChildren, useState } from "react";
+import {
+  FocusEvent,
+  FocusEventHandler,
+  KeyboardEvent,
+  KeyboardEventHandler,
+  PropsWithChildren,
+  useState,
+} from "react";
 import { useFormStatus } from "react-dom";
 import { useToast } from "../ui/use-toast";
 import addManga from "./@actions/addManga";
-import { scanMangaDatasSchema, scanMangaDatasType } from "@/schemas/scrappingDatasShemas";
-import { MangaDropdown } from "./mangaDropDown.component";
 
 const SubmitButton = ({ children }: PropsWithChildren) => {
   const { pending } = useFormStatus();
@@ -30,41 +41,43 @@ const SubmitButton = ({ children }: PropsWithChildren) => {
 export const AddMangaDialog = () => {
   const [open, setOpen] = useState(false);
   const { toast } = useToast();
-  const [distMangas, setDistMangas] = useState<scanMangaDatasType | null>(null);
+  const [distMangas, setDistMangas] = useState<ScanMangaDatasType | null>(null);
+  const [selectedManga, setSelectedManga] = useState<ScanMangaTitleType | null>(
+    null
+  );
   let timeOutId: NodeJS.Timeout | null = null;
 
-  const handleChangeValues = (manga: Partial<NewManga>) => {
-    const title = manga.title;
+  const fetchScanManga = async (encodedUri: string) => {
+    const response = await fetch(
+      "https://www.scan-manga.com/api/search/quick.json?term=" + encodedUri
+    );
+    if (response.ok) {
+      const scanMangasDatas = await response.json();
+      const safeScanMangasDatas =
+        scanMangaDatasSchema.safeParse(scanMangasDatas);
+      if (safeScanMangasDatas.success) {
+        setDistMangas(safeScanMangasDatas.data);
+      }
+    } else {
+      console.log(await response.json());
+      toast({
+        title: "Impossible d'utiliser la recherche magique 😭",
+        description: "Esssaye de désactiver ton vpn",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleChangeValues = (event: KeyboardEvent<HTMLInputElement>) => {
+    const title = event.currentTarget.value;
     if (title && title.length > 2) {
-      console.log("🚀 ~ file: addMangaDialog.component.tsx:39 ~ handleChangeValues ~ title:", title)
-      
       if (timeOutId) {
         clearTimeout(timeOutId);
         console.log(timeOutId);
         timeOutId = null;
       }
       timeOutId = setTimeout(() => {
-        const fetchScanManga = async () => {
-          const response = await fetch(
-            "https://www.scan-manga.com/api/search/quick.json?term=" + encodeURIComponent(title)
-          );
-          if (response.ok) {
-            const scanMangasDatas = await response.json();
-            const safeScanMangasDatas = scanMangaDatasSchema.safeParse(scanMangasDatas);
-            if(safeScanMangasDatas.success) {
-              setDistMangas(safeScanMangasDatas.data)
-            }else {
-              console.log("🚀 ~ file: addMangaDialog.component.tsx:56 ~ fetchScanManga ~ safeScanMangasDatas.error:", safeScanMangasDatas.error)
-            }
-          } else {
-            toast({
-              title: "Impossible d'utiliser la recherche magique 😭",
-              description: 'Esssaye de désactiver ton vpn',
-              variant: "destructive",
-            });
-          }
-        };
-        fetchScanManga();
+        fetchScanManga(encodeURIComponent(title));
       }, 1000);
     }
   };
@@ -94,17 +107,27 @@ export const AddMangaDialog = () => {
         }
       } else {
         toast({
-          title: "values n' est pas de type newMangaSchema",
+          title: "Valeurs invalides",
+          description: "Veuillez respecter la nomenclarure",
           variant: "destructive",
         });
       }
     } else {
       toast({
-        title: "n est pas un formdata",
-        description: "veuillez parler de ce problemes si le probleme persiste",
+        title: "N'est pas un formdata",
+        description: "veuillez signaler le probleme s'il persiste",
         variant: "destructive",
       });
     }
+  };
+  const handleBlur = (event: FocusEvent<HTMLInputElement>) => {
+    console.log(
+      "🚀 ~ file: addMangaDialog.component.tsx:127 ~ handleBlur ~ event.target:",
+      event.relatedTarget
+    );
+    setTimeout(() => {
+      setDistMangas(null);
+    }, 300); // 300ms is necessary for dodge onBlur
   };
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -117,15 +140,58 @@ export const AddMangaDialog = () => {
         <DialogHeader>
           <DialogTitle>Ajouter un manga</DialogTitle>
         </DialogHeader>
+        {distMangas && (
+          <ul
+            className={cn(
+              "bg-secondary rounded",
+              "absolute top-36 z-10",
+              "left-1/2 transform -translate-x-1/2",
+              "max-h-2/4 w-11/12 overflow-auto"
+            )}
+          >
+            {distMangas.title.map((manga, order) => (
+              <li
+                key={order}
+                className={cn(
+                  "cursor-pointer rounded m-1 p-1",
+                  "hover:bg-primary hover:text-secondary" //hover
+                )}
+                onClick={(event) => {
+                  const { target } = event;
+                  target instanceof HTMLLIElement &&
+                    target.innerText &&
+                    setSelectedManga(
+                      distMangas.title.find(
+                        (manga) => manga.nom_match === target.innerText
+                      ) || null
+                    );
+                  setDistMangas(null);
+                }}
+              >
+                {manga.nom_match}
+              </li>
+            ))}
+          </ul>
+        )}
         <AutoForm
           formSchema={newMangaSchema}
           action={handleSubmit}
-          onValuesChange={handleChangeValues}
+          // onValuesChange={handleChangeValues}
           values={{
-            title: distMangas?.title[0].nom_match,
-            linkManga: 'https://scan-manga.com/' + distMangas?.title[0].url,
-            linkImage: 'https://scan-manga.com/img/manga/' + distMangas?.title[0].image,
-            chapter: 0
+            title: selectedManga?.nom_match,
+            linkManga: (selectedManga &&
+              `https://scan-manga.com${selectedManga.url}`)!,
+            linkImage: (selectedManga &&
+              `https://scan-manga.com/img/manga/${selectedManga.image}`)!,
+            chapter: 0,
+          }}
+          fieldConfig={{
+            title: {
+              inputProps: {
+                onBlur: handleBlur,
+                onKeyUp: handleChangeValues,
+              },
+            },
           }}
         >
           <SubmitButton>Add Manga</SubmitButton>
