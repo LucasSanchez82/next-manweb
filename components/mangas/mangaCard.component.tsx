@@ -16,7 +16,7 @@ import { useToast } from "../ui/use-toast";
 import deleteManga from "./@actions/deleteManga";
 import { EditForm } from "./mangaEditForm.component";
 import { MangaUpdateForm } from "./mangaUpdateChapterForm.component";
-import { DeleteForm } from "./mangasForm/DeleteForm";
+import { DeleteForm } from "./mangasForm/deleteForm";
 
 export function MangaCard(mangaInitial: Manga) {
   const [manga, setManga] = useState<Manga>(mangaInitial);
