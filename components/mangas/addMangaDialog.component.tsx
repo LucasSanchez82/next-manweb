@@ -8,8 +8,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { NewManga } from "@/lib/types";
-import { cn } from "@/lib/utils";
 import { newMangaSchema } from "@/schemas/mangasSchemas";
 import {
   ScanMangaDatasType,
@@ -17,17 +15,11 @@ import {
   scanMangaDatasSchema,
 } from "@/schemas/scrappingDatasShemas";
 import { Loader2, PlusCircle } from "lucide-react";
-import {
-  FocusEvent,
-  FocusEventHandler,
-  KeyboardEvent,
-  KeyboardEventHandler,
-  PropsWithChildren,
-  useState,
-} from "react";
+import { FocusEvent, KeyboardEvent, PropsWithChildren, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { useToast } from "../ui/use-toast";
 import addManga from "./@actions/addManga";
+import AddMangaListPreview from "./addMangaPreviewSearch";
 
 const SubmitButton = ({ children }: PropsWithChildren) => {
   const { pending } = useFormStatus();
@@ -127,7 +119,7 @@ export const AddMangaDialog = () => {
     );
     setTimeout(() => {
       setDistMangas(null);
-    }, 300); // 300ms is necessary for dodge onBlur
+    }, 100); // 00ms is necessary for dodge onBlur
   };
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -140,39 +132,6 @@ export const AddMangaDialog = () => {
         <DialogHeader>
           <DialogTitle>Ajouter un manga</DialogTitle>
         </DialogHeader>
-        {distMangas && (
-          <ul
-            className={cn(
-              "bg-secondary rounded",
-              "absolute top-36 z-10",
-              "left-1/2 transform -translate-x-1/2",
-              "max-h-2/4 w-11/12 overflow-auto"
-            )}
-          >
-            {distMangas.title.map((manga, order) => (
-              <li
-                key={order}
-                className={cn(
-                  "cursor-pointer rounded m-1 p-1",
-                  "hover:bg-primary hover:text-secondary" //hover
-                )}
-                onClick={(event) => {
-                  const { target } = event;
-                  target instanceof HTMLLIElement &&
-                    target.innerText &&
-                    setSelectedManga(
-                      distMangas.title.find(
-                        (manga) => manga.nom_match === target.innerText
-                      ) || null
-                    );
-                  setDistMangas(null);
-                }}
-              >
-                {manga.nom_match}
-              </li>
-            ))}
-          </ul>
-        )}
         <AutoForm
           formSchema={newMangaSchema}
           action={handleSubmit}
@@ -194,6 +153,11 @@ export const AddMangaDialog = () => {
             },
           }}
         >
+          {distMangas && (
+            <AddMangaListPreview
+              {...{ distMangas, setDistMangas, setSelectedManga }}
+            />
+          )}
           <SubmitButton>Add Manga</SubmitButton>
         </AutoForm>
       </DialogContent>
