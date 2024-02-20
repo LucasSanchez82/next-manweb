@@ -25,7 +25,7 @@ export default function HeroHeader() {
         </SignInButtons>
       {heroHeader.image && (
         <div className="flex flex-1 justify-center lg:justify-end">
-          <Image
+          <img
             src={heroHeader.image}
             width={500}
             height={500}
