@@ -17,12 +17,12 @@ export default function HeroHeader() {
             {heroHeader.subheader}
           </h2>
         </div>
-      </div>
         <SignInButtons
         className={`w-[10rem] ${cn(buttonVariants({ size: "lg" }))}`}
         >
           Essayer
         </SignInButtons>
+      </div>
       {heroHeader.image && (
         <div className="flex flex-1 justify-center lg:justify-end">
           <img
