@@ -9,7 +9,7 @@ import { Inter } from "next/font/google";
 import Link from "next/link";
 import { authOptions } from "./api/auth/[...nextauth]/route";
 import "./globals.css";
-import { siteConfig } from "@/config/site"
+import { siteConfig } from "@/config/site";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
@@ -53,14 +53,14 @@ export const metadata = {
   icons: {
     icon: "/favicon.ico",
   },
-}
+};
 
 export const viewport = {
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "white" },
     { media: "(prefers-color-scheme: dark)", color: "black" },
   ],
-}
+};
 
 export default async function RootLayout({
   children,
@@ -70,7 +70,12 @@ export default async function RootLayout({
   const session = await getServerSession(authOptions);
   return (
     <html lang="fr">
-      <body className={inter.className + 'flex flex-col justify-between items-end min-h-[100vh]'}>
+      <body
+        className={
+          inter.className +
+          "flex flex-col justify-between items-end min-h-[100vh]"
+        }
+      >
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -78,25 +83,7 @@ export default async function RootLayout({
           disableTransitionOnChange
         >
           <ModeToggle />
-          <header>
-            <nav className="flex flex-row justify-around">
-              {session ? (
-                <>
-                  <SignOutButtons />
-                  <Link href="/mangas">
-                    <Button variant="secondary">Mangas</Button>
-                  </Link>
-                </>
-              ) : (
-                <>
-                  <SignInButtons />
-                  <Link href="/">
-                    <Button variant="secondary">Home</Button>
-                  </Link>
-                </>
-              )}
-            </nav>
-          </header>
+
           {children}
           <Toaster />
         </ThemeProvider>
