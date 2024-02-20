@@ -44,8 +44,8 @@ export const featureCards: ContentSection = {
 };
 
 export const features: ContentSection = {
-  header: `Features`,
-  subheader: `Why use Next Landing?`,
+  header: `Fonctionnalité`,
+  subheader: `Pourquoi utiliser Manweb ?`,
   image: `/landing.png`,
   content: [
     {
