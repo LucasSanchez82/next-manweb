@@ -1,16 +1,26 @@
-'use client'
-import { signIn, signOut } from 'next-auth/react';
-import React from 'react';
-import { Button } from './ui/button';
+"use client";
+import { signIn, signOut } from "next-auth/react";
+import React, { PropsWithChildren } from "react";
+import { Button, ButtonProps } from "./ui/button";
 
-export const SignInButtons = () => {
-    return (
-        <Button onClick={() => signIn()}>Login</Button>
-    );
+export const SignInButtons = ({
+  children,
+  ...props
+}: PropsWithChildren<ButtonProps & React.RefAttributes<HTMLButtonElement>>) => {
+  return (
+    <Button {...props} onClick={() => signIn()}>
+      {children || "Se-connecter"}
+    </Button>
+  );
 };
 
-export const SignOutButtons = () => {
-    return (
-        <Button variant='destructive' onClick={() => signOut()}>Logout</Button>
-    );
+export const SignOutButtons = ({
+  children,
+  ...props
+}: PropsWithChildren<ButtonProps & React.RefAttributes<HTMLButtonElement>>) => {
+  return (
+    <Button {...props} variant="destructive" onClick={() => signOut()}>
+      {children || "Se-déconnecter"}
+    </Button>
+  );
 };

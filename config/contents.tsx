@@ -16,7 +16,7 @@ import {
  ==================== */
 
 export const heroHeader: HeroHeader = {
-  header: `manweb, le marque`,
+  header: `manweb, le marque page moderne`,
   subheader: `Se souvenir de ses lectures n'a jamais été aussi simple`,
   image: `/hero-img.webp`,
 };

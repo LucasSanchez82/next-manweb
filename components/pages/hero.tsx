@@ -1,8 +1,9 @@
-import Link from "next/link"
-import Image from "next/image"
-import { buttonVariants } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
-import { heroHeader } from "@/config/contents"
+import Link from "next/link";
+import Image from "next/image";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { heroHeader } from "@/config/contents";
+import { SignInButtons } from "../nextAuthButtons";
 
 export default function HeroHeader() {
   return (
@@ -16,15 +17,20 @@ export default function HeroHeader() {
             {heroHeader.subheader}
           </h2>
         </div>
-        <Link
+      </div>
+      {/* <Link
           href="https://github.com/redpangilinan/next-shadcn-landing"
           target="_blank"
           className={`w-[10rem] ${cn(buttonVariants({ size: "lg" }))}`}
         >
           Get started
-        </Link>
-      </div>
-      {heroHeader.image !== "" ? (
+        </Link> */}
+        <SignInButtons
+        className={`w-[10rem] ${cn(buttonVariants({ size: "lg" }))}`}
+        >
+          Essayer
+        </SignInButtons>
+      {heroHeader.image && (
         <div className="flex flex-1 justify-center lg:justify-end">
           <Image
             src={heroHeader.image}
@@ -33,9 +39,7 @@ export default function HeroHeader() {
             alt="Header image"
           />
         </div>
-      ) : (
-        <></>
       )}
     </section>
-  )
+  );
 }
