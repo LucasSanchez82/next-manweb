@@ -1,7 +1,7 @@
 import { SignOutButtons, SignInButtons } from "@/components/nextAuthButtons";
 import { Button } from "@/components/ui/button";
 import { sessionProvider } from "@/lib/utilsSession";
-import { Link } from "lucide-react";
+import Link from "next/link";
 import React, { PropsWithChildren } from "react";
 
 const layout = ({ children }: PropsWithChildren) => {
