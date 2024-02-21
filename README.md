@@ -34,3 +34,6 @@ To deploy this with docker to http://localhost:3000
 ## Demo
 
 https://manweb.lucas-sanchez.fr
+
+![Demo image](https://github.com/LucasSanchez82/next-manweb/blob/main/public/landing.png)
+
