@@ -9,7 +9,7 @@ import { useFormStatus } from "react-dom";
 
 const SubmitButton = () => {
   const { pending } = useFormStatus();
-  return <Button type="submit">{pending ? "..." : "🔍"}</Button>;
+  return <Button aria-disabled={pending} type="submit">{pending ? "..." : "🔍"}</Button>;
 };
 
 const Searchbar = () => {
