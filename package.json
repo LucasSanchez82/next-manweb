@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "docker": "prisma generate && prisma migrate dev -n initial && next dev",
+    "docker": "prisma generate && prisma migrate dev -n initial && next build && next start",
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
