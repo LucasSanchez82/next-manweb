@@ -1,7 +1,7 @@
 
 # Manweb
 
-Manweb est une application servant à memoriser ses lectures
+Manweb is an application for memorizing your reading mangas
 
 
 ## Run Locally
