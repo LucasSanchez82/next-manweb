@@ -1,11 +1,11 @@
 "use client";
+import { cn } from "@/lib/utils";
 import { newMangaSchema } from "@/schemas/mangasSchemas";
 import {
   ScanMangaDatasType,
   ScanMangaTitleType,
 } from "@/schemas/scrappingDatasShemas";
 import { TabsList, TabsTrigger } from "@radix-ui/react-tabs";
-import Image from "next/image";
 import Link from "next/link";
 import { SetStateAction, useState } from "react";
 import { z } from "zod";
@@ -22,7 +22,6 @@ import {
 import { Tabs, TabsContent } from "../ui/tabs";
 import { useToast } from "../ui/use-toast";
 import AddMangaListPreview from "./addMangaPreviewSearch";
-import { cn } from "@/lib/utils";
 
 const AddMangaDialogContent = ({
   distMangas,
@@ -100,7 +99,7 @@ const AddMangaDialogContent = ({
             )}
             value="magic"
           >
-            Magic
+            🪄Magic🪄
           </TabsTrigger>
           <TabsTrigger
             className={cn(
@@ -123,8 +122,8 @@ const AddMangaDialogContent = ({
           />
 
           {selectedManga && (
-            <Card className="w-[350px] m-5 min-h-[175px] flex flex-col justify-between items-center relative overflow-hidden">
-              <CardHeader className="z-10 bg-secondary p-1 m-1 rounded">
+            <Card className="w-[350px] m-auto mt-5 min-h-[175px] flex flex-col justify-between items-center relative overflow-hidden">
+              <CardHeader className="bg-secondary rounded">
                 <Link href={selectedManga.url} target={"_blank"}>
                   <CardTitle className="text-center p-1 pr-2 pl-2">
                     {selectedManga.nom_match}
@@ -132,7 +131,7 @@ const AddMangaDialogContent = ({
                 </Link>
               </CardHeader>
               <CardContent className="absolute m-0 p-0 w-full h-full">
-                <Image
+                <img
                   className={"rounded object-cover w-full h-full "}
                   src={
                     "https://scan-manga.com/img/manga/" + selectedManga.image

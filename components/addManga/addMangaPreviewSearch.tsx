@@ -49,7 +49,6 @@ const AddMangaListPreview = ({
       <CommandInput placeholder="Type a command or search..." />
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>
-        <CommandGroup heading="Suggestions">
           {distMangas.title.map((manga, order) => (
             <CommandItem
               key={order}
@@ -61,7 +60,6 @@ const AddMangaListPreview = ({
               <span>{manga.nom_match}</span>
             </CommandItem>
           ))}
-        </CommandGroup>
       </CommandList>
     </Command>
   );
