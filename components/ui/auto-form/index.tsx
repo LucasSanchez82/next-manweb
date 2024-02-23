@@ -1,20 +1,20 @@
 "use client";
-import React, { FormHTMLAttributes } from "react";
+import React from "react";
+import { DefaultValues, useForm } from "react-hook-form";
 import { z } from "zod";
 import { Form } from "../form";
-import { DefaultValues, useForm } from "react-hook-form";
 
+import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../button";
-import { cn } from "@/lib/utils";
 
+import AutoFormObject from "./fields/object";
 import { FieldConfig } from "./types";
 import {
   ZodObjectOrWrapped,
   getDefaultValues,
   getObjectFormSchema,
 } from "./utils";
-import AutoFormObject from "./fields/object";
 
 export function AutoFormSubmit({ children }: { children?: React.ReactNode }) {
   return <Button type="submit">{children ?? "Submit"}</Button>;
@@ -30,6 +30,7 @@ function AutoForm<SchemaType extends ZodObjectOrWrapped>({
   children,
   className,
   action,
+  parsedAction: parsedActionProp,
 }: {
   formSchema: SchemaType;
   values?: Partial<z.infer<SchemaType>>;
@@ -39,7 +40,8 @@ function AutoForm<SchemaType extends ZodObjectOrWrapped>({
   fieldConfig?: FieldConfig<z.infer<SchemaType>>;
   children?: React.ReactNode;
   className?: string;
-  action?: string | ((formData: FormData) => void) | undefined;
+  parsedAction?: (values: z.infer<SchemaType>) => void;
+  action?: ((formData: FormData) => void) | undefined;
 }) {
   const objectFormSchema = getObjectFormSchema(formSchema);
   const defaultValues: DefaultValues<z.infer<typeof objectFormSchema>> =
@@ -57,13 +59,22 @@ function AutoForm<SchemaType extends ZodObjectOrWrapped>({
       onSubmitProp?.(parsedValues.data);
     }
   }
+  function onParsedAction(values: z.infer<typeof formSchema>) {
+    const parsedValues = formSchema.safeParse(values);
+    if (parsedValues.success) {
+      parsedActionProp?.(parsedValues.data);
+    }
+  }
 
   return (
     <Form {...form}>
       <form
-        action={action}
+        action={(e) => {
+          form.handleSubmit(onParsedAction)();
+          action && action(e);
+        }}
         onSubmit={(e) => {
-          onSubmitProp && form.handleSubmit(onSubmit)(e);
+          onSubmitProp && form.handleSubmit(onSubmit)();
         }}
         onChange={() => {
           const values = form.getValues();

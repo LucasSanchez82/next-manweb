@@ -1,3 +1,4 @@
+'use client'
 // MangaList.tsx
 import {
   ScanMangaDatasType,
@@ -36,7 +37,7 @@ const AddMangaListPreview = ({
       }
       timeOutId = setTimeout(() => {
         upDistMangas(encodeURIComponent(title));
-      }, 1000);
+      }, 300);
     }
   };
   return (

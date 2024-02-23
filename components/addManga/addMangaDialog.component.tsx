@@ -7,26 +7,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { newMangaSchema } from "@/schemas/mangasSchemas";
 import {
   ScanMangaDatasType,
   ScanMangaTitleType,
   scanMangaDatasSchema,
 } from "@/schemas/scrappingDatasShemas";
-import { Loader2, PlusCircle } from "lucide-react";
-import Link from "next/link";
-import { PropsWithChildren, useState } from "react";
-import { useFormStatus } from "react-dom";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "../ui/card";
+import { PlusCircle } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useToast } from "../ui/use-toast";
-import addManga from "../mangas/@actions/addManga";
-import AddMangaListPreview from "./addMangaPreviewSearch";
 import AddMangaDialogContent from "./addMangaDialog.content.component";
 
 export const AddMangaDialog = () => {
@@ -57,51 +45,6 @@ export const AddMangaDialog = () => {
     }
   };
 
-  const handleSubmit = async (values: any) => {
-    const errorWrapper = async (fn: () => any) => {
-      if (values instanceof FormData) {
-        const newManga = Object.fromEntries(values);
-
-        const safeNewManga = newMangaSchema.safeParse(newManga);
-
-        if (safeNewManga.success) {
-          const newManga = await addManga(safeNewManga.data);
-          if ("error" in newManga) {
-            toast({
-              title:
-                typeof newManga.error === "string"
-                  ? newManga.error
-                  : "Erreur interne du serveur",
-              variant: "destructive",
-            });
-          } else {
-            fn();
-          }
-        } else {
-          toast({
-            title: "Valeurs invalides",
-            description: "Veuillez respecter la nomenclarure",
-            variant: "destructive",
-          });
-        }
-      } else {
-        toast({
-          title: "N'est pas un formdata",
-          description: "veuillez signaler le probleme s'il persiste",
-          variant: "destructive",
-        });
-      }
-    };
-    errorWrapper(() => {
-      toast({
-        title: "ajoute avec succes",
-        variant: "default",
-      });
-      setOpen(false);
-      setDistMangas(null);
-      setSelectedManga(null);
-    });
-  };
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -114,12 +57,13 @@ export const AddMangaDialog = () => {
           <DialogTitle>Ajouter un manga</DialogTitle>
         </DialogHeader>
         <AddMangaDialogContent
-        {...{
-          distMangas: distMangas || { genre: {}, title: [] },
-          setDistMangas,
-          useSelectedManga: { setSelectedManga, selectedManga },
-          upDistMangas: fetchScanManga,
-        }}
+          {...{
+            distMangas: distMangas || { genre: {}, title: [] },
+            setDistMangas,
+            useSelectedManga: { setSelectedManga, selectedManga },
+            upDistMangas: fetchScanManga,
+            setOpen,
+          }}
         />
       </DialogContent>
     </Dialog>
