@@ -6,5 +6,5 @@ export const sessionProvider = async (fn: (sessionValue: Session) => any, elseFn
     const session = await getServerSession(authOptions);
     if(session) {
         return fn(session);
-    }else elseFn ? elseFn() : redirect('/');
+    }else return elseFn ? elseFn() : redirect('/');
 }

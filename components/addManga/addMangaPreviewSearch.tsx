@@ -1,10 +1,9 @@
 // MangaList.tsx
-import { cn } from "@/lib/utils";
 import {
   ScanMangaDatasType,
   ScanMangaTitleType,
 } from "@/schemas/scrappingDatasShemas";
-import { SetStateAction, useState } from "react";
+import { FormEvent, SetStateAction } from "react";
 
 import {
   Command,
@@ -12,9 +11,7 @@ import {
   CommandGroup,
   CommandInput,
   CommandItem,
-  CommandList,
-  CommandSeparator,
-  CommandShortcut,
+  CommandList
 } from "@/components/ui/command";
 
 const AddMangaListPreview = ({
@@ -28,17 +25,23 @@ const AddMangaListPreview = ({
   setDistMangas: (value: SetStateAction<ScanMangaDatasType | null>) => void;
   upDistMangas: (value: string) => Promise<void>;
 }) => {
-  const [open, setOpen] = useState(false);
+  let timeOutId: NodeJS.Timeout | null = null;
+
+  const handleChangeValue = (event: FormEvent<HTMLDivElement>) => {
+    const title = event.target instanceof HTMLInputElement && event.target.value;
+    if (title && title.length > 2) {
+      if (timeOutId) {
+        clearTimeout(timeOutId);
+        timeOutId = null;
+      }
+      timeOutId = setTimeout(() => {
+        upDistMangas(encodeURIComponent(title));
+      }, 1000);
+    }
+  };
   return (
     <Command
-      onChange={(event) => {
-        if (event.target instanceof HTMLInputElement) {
-          const value = event.target.value;
-          if (value.length > 2) {
-            upDistMangas(value);
-          }
-        }
-      }}
+      onChange={handleChangeValue}
       shouldFilter={false}
       className="rounded-lg border shadow-md"
     >

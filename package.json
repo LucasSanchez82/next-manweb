@@ -36,6 +36,7 @@
     "clsx": "^2.0.0",
     "cmdk": "^0.2.0",
     "date-fns": "^2.30.0",
+    "framer-motion": "^11.0.6",
     "lucide-react": "^0.291.0",
     "next": "14.0.1",
     "next-auth": "^4.24.4",

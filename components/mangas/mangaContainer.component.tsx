@@ -1,7 +1,7 @@
 "use client";
 import { Manga } from "@/lib/types";
 import { Suspense } from "react";
-import { AddMangaDialog } from "./addMangaDialog.component";
+import { AddMangaDialog } from "../addManga/addMangaDialog.component";
 import { MangaCard } from "./mangaCard.component";
 import NavigationBetweenPagesBar from "./navigationBetweenpagesBar.component";
 import Searchbar from "./searchBar.component";
