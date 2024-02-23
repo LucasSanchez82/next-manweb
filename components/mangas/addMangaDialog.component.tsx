@@ -32,6 +32,7 @@ const SubmitButton = ({ children }: PropsWithChildren) => {
 
 export const AddMangaDialog = () => {
   const [open, setOpen] = useState(false);
+  const [onHover, setOnHover] = useState(false);
   const { toast } = useToast();
   const [distMangas, setDistMangas] = useState<ScanMangaDatasType | null>(null);
   const [selectedManga, setSelectedManga] = useState<ScanMangaTitleType | null>(
@@ -132,10 +133,17 @@ export const AddMangaDialog = () => {
         <DialogHeader>
           <DialogTitle>Ajouter un manga</DialogTitle>
         </DialogHeader>
+          <AddMangaListPreview
+            {...{
+              distMangas: distMangas || { genre: {}, title: [] },
+              setDistMangas,
+              setSelectedManga,
+              upDistMangas: fetchScanManga,
+            }}
+          />
         <AutoForm
           formSchema={newMangaSchema}
           action={handleSubmit}
-          // onValuesChange={handleChangeValues}
           values={{
             title: selectedManga?.nom_match,
             linkManga: (selectedManga &&
@@ -144,20 +152,7 @@ export const AddMangaDialog = () => {
               `https://scan-manga.com/img/manga/${selectedManga.image}`)!,
             chapter: 0,
           }}
-          fieldConfig={{
-            title: {
-              inputProps: {
-                onBlur: handleBlur,
-                onKeyUp: handleChangeValues,
-              },
-            },
-          }}
         >
-          {distMangas && (
-            <AddMangaListPreview
-              {...{ distMangas, setDistMangas, setSelectedManga }}
-            />
-          )}
           <SubmitButton>Add Manga</SubmitButton>
         </AutoForm>
       </DialogContent>
