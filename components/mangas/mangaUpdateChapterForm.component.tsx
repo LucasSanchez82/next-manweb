@@ -3,16 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { updateManga } from "./@actions/update";
 import { useFormStatus } from "react-dom";
-import { Loader2 } from "lucide-react";
+import { Download, Loader2, Save } from "lucide-react";
+import { SubmitButton } from "../submitButton";
 
-const SubmitButton = () => {
-  const { pending,  } = useFormStatus();
-  return (
-    <Button type="submit"  aria-disabled={pending} className="w-1/4">
-      {pending ? <Loader2 className="loader-2 " /> : "Update"}
-    </Button>
-  );
-};
 
 export const MangaUpdateForm = ({
   chapter,
@@ -26,7 +19,7 @@ export const MangaUpdateForm = ({
       className="flex items-center justify-around p-0 w-full"
       action={updateManga}
     >
-      <input className="hidden" name="boxId" defaultValue={idManga} />
+      <Input className="hidden" name="boxId" defaultValue={idManga} />
       <Input
         defaultValue={chapter}
         className="w-2/4"
@@ -36,7 +29,9 @@ export const MangaUpdateForm = ({
         id="chapter"
         placeholder="chapter.."
       />
-      <SubmitButton />
+      <SubmitButton variant='outline' ><Download /></SubmitButton>
+      
+      
     </form>
   );
 };

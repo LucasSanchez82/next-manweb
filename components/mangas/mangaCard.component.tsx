@@ -9,28 +9,22 @@ import {
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Manga } from "@/lib/types";
-import { Edit, X } from "lucide-react";
+import { X } from "lucide-react";
 import Link from "next/link";
-import { SyntheticEvent, useState } from "react";
+import { useState } from "react";
 import { useToast } from "../ui/use-toast";
 import deleteManga from "./@actions/deleteManga";
+import { DropDownCommands } from "./mangaCard.dropDown.component";
 import { EditForm } from "./mangaEditForm.component";
 import { MangaUpdateForm } from "./mangaUpdateChapterForm.component";
-import { DeleteForm } from "./mangasForm/deleteForm";
+;
 
 export function MangaCard(mangaInitial: Manga) {
   const [manga, setManga] = useState<Manga>(mangaInitial);
   const [isErrorImage, setIsErrorImage] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const { toast } = useToast();
-
-  const handleDelete = async (event: SyntheticEvent) => {
-    event.preventDefault();
-    // ? really want to delete ?
-    // const isConfirmed = confirm("sur de vouloir le supprimer definitevement ?");
-
-    // if (!isConfirmed) return;
-    // console.log("manga id ", manga.id);
+  const handleDelete = async () => {
     if (manga.id) {
       const response = await deleteManga(manga.id);
       if (response.success) {
@@ -48,7 +42,6 @@ export function MangaCard(mangaInitial: Manga) {
   };
 
   if (isEdit && manga.id) {
-    // be sure that manga is editable
     return (
       <Card className="w-[350px] m-5 min-h-[175px] flex flex-col justify-between items-center relative overflow-hidden">
         <CardHeader className="bg-secondary p-1 m-1 rounded">
@@ -77,23 +70,17 @@ export function MangaCard(mangaInitial: Manga) {
   } else {
     return (
       <Card className="w-[350px] m-5 min-h-[175px] flex flex-col justify-between items-center relative overflow-hidden">
-        <CardHeader className="z-10 bg-secondary p-1 m-1 rounded">
-          <Link href={manga.linkManga} target={"_blank"}>
-            <CardTitle className="text-center p-1 pr-2 pl-2">
-              {manga.title}
-            </CardTitle>
-          </Link>
-          {manga.id && (
-            <>
-              <DeleteForm handleDelete={handleDelete} />
-              <Button
-                onClick={() => setIsEdit(true)}
-                className="w-10 h-10 p-0 absolute top-3 left-3 bg-primary"
-              >
-                <Edit />
-              </Button>
-            </>
-          )}
+        <CardHeader className="z-10 w-full p-0 m-1 rounded">
+          <div className="flex items-center justify-around">
+            <Link href={manga.linkManga} target={"_blank"}>
+              <CardTitle className="text-center bg-secondary rounded p-1 pr-2 pl-2">
+                {manga.title}
+              </CardTitle>
+            </Link>
+            {manga.id && (
+              <DropDownCommands setIsEdit={setIsEdit} handleDelete={handleDelete} />
+            )}
+          </div>
         </CardHeader>
         <CardContent className="absolute m-0 p-0 w-full h-full">
           {isErrorImage ? (

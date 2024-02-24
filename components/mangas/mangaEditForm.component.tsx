@@ -7,6 +7,7 @@ import { Manga } from "@/lib/types";
 import { Dispatch, SetStateAction } from "react";
 import { useFormStatus } from "react-dom";
 import { editManga } from "./@actions/editManga";
+import { SubmitButton } from "../submitButton";
 
 type editFormType = {
   title: string;
@@ -14,15 +15,6 @@ type editFormType = {
   linkImage: string;
   id: number;
   setIsEdit?: Dispatch<SetStateAction<boolean>>
-};
-
-const SubmitButton = () => {
-  const { pending } = useFormStatus();
-  return (
-    <Button type="submit" aria-disabled={pending}>
-      {pending ? "Chargement..." : "Mettre a jour"}
-    </Button>
-  );
 };
 export const EditForm = ({ linkImage, linkManga, title, id, setIsEdit, setManga }: editFormType & {setManga: Dispatch<SetStateAction<Manga>>}) => {
   const handleSubmit = async(formdata: FormData) => {
@@ -70,7 +62,7 @@ export const EditForm = ({ linkImage, linkManga, title, id, setIsEdit, setManga 
     method="POST"
       action={handleSubmit}
     >
-      <input type="text" className="hidden" name="id" value={id} />
+      <Input type="text" className="hidden" name="id" value={id} />
       <Input id="title" type="text" defaultValue={title} name="title" />
       link manga : 
       <Input

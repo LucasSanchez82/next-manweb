@@ -1,22 +1,37 @@
-import { SyntheticEvent } from "react";
-import NextImage from "next/image";
+import { SubmitButton } from "@/components/submitButton";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Trash2 } from "lucide-react";
 
-export const DeleteForm = ({ handleDelete }: { handleDelete: (event: SyntheticEvent) => Promise<void> }) =>  {
-    return (
-      <form onSubmit={handleDelete}>
-        <Button
-          type="submit"
-          className="w-10 h-10 p-0 bg-transparent absolute top-3 right-3"
-        >
-          <NextImage //delete Icon
-            src="/delete-icon.svg"
-            alt="Icon of a delete button"
-            width={40}
-            height={40}
-          />
+export const DeleteForm = ({
+  handleDelete,
+}: {
+  handleDelete: () => Promise<void>;
+}) => {
+  return (
+    <Dialog>
+      <DialogTrigger className="w-full">
+        <Button variant={"outline"} className="w-full">
+          <Trash2 className="text-red-700" />
         </Button>
-      </form>
-    );
-  }
-  
+      </DialogTrigger>
+      <DialogContent>
+        <DialogTitle>Supprimer</DialogTitle>
+        <DialogDescription>
+          Êtes-vous sûr de vouloir supprimer ce manga ?
+        </DialogDescription>
+        <form action={handleDelete}>
+          <SubmitButton className="w-full">
+            <Trash2 className="text-red-700" />
+          </SubmitButton>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+};
