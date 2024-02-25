@@ -10,7 +10,7 @@ const page = async ({
   return sessionProvider(async (session) => {
     const searchedValue = typeof searchParams.search === 'string' ? searchParams.search : '';
     const nbAffiche = Number(process.env.MANGAS_NB_AFFICHE || 5);
-    const currPage = Number(searchParams.page) || 0;
+    const currPage = Number(searchParams.page) || 1;
     const nbMangas = await prisma.manga.count({
       where: {
         userId: session.user.userId,
