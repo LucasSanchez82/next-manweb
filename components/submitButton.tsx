@@ -12,9 +12,10 @@ export function SubmitButton({
   children,
   onload,
   className,
+  altError,
   ...props
 }: PropsWithChildren<
-  ButtonProps & React.RefAttributes<HTMLButtonElement> & { onload?: () => any }
+  ButtonProps & React.RefAttributes<HTMLButtonElement> & { onload?: () => any; altError?: React.ReactNode }
 >) {
   const { pending } = useFormStatus();
   const content = children ?? "Submit";
@@ -30,7 +31,7 @@ export function SubmitButton({
       className={cn("rounded cursor-pointer p-1", className)}
       type="submit"
     >
-      {pending ? <Loader2 className="loader-2 " /> : content}
+      {pending ? altError  || <Loader2 className="infinite-rotate" /> : content}
     </Button>
   );
 }

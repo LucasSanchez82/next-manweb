@@ -5,7 +5,7 @@ import { updateManga } from "./@actions/update";
 import { useFormStatus } from "react-dom";
 import { Download, Loader2, Save } from "lucide-react";
 import { SubmitButton } from "../submitButton";
-
+import {UpdateIcon} from '@radix-ui/react-icons'
 
 export const MangaUpdateForm = ({
   chapter,
@@ -29,7 +29,7 @@ export const MangaUpdateForm = ({
         id="chapter"
         placeholder="chapter.."
       />
-      <SubmitButton variant='outline' ><Download /></SubmitButton>
+      <SubmitButton altError={<UpdateIcon className="infinite-rotate" />} variant='outline' ><UpdateIcon width={'35px'} /></SubmitButton>
       
       
     </form>
