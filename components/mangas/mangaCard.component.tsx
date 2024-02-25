@@ -17,13 +17,13 @@ import deleteManga from "./@actions/deleteManga";
 import { DropDownCommands } from "./mangaCard.dropDown.component";
 import { EditForm } from "./mangaEditForm.component";
 import { MangaUpdateForm } from "./mangaUpdateChapterForm.component";
-;
 
 export function MangaCard(mangaInitial: Manga) {
   const [manga, setManga] = useState<Manga>(mangaInitial);
   const [isErrorImage, setIsErrorImage] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const { toast } = useToast();
+
   const handleDelete = async () => {
     if (manga.id) {
       const response = await deleteManga(manga.id);
@@ -72,13 +72,17 @@ export function MangaCard(mangaInitial: Manga) {
       <Card className="w-[350px] m-5 min-h-[175px] flex flex-col justify-between items-center relative overflow-hidden">
         <CardHeader className="z-10 w-full p-0 m-1 rounded">
           <div className="flex items-center justify-around">
-            <Link href={manga.linkManga} target={"_blank"}>
-              <CardTitle className="text-center bg-secondary rounded p-1 pr-2 pl-2">
+            <Link href={manga.linkManga} target={"_blank"} className="p-1">
+              <CardTitle className="text-center bg-secondary rounded p-2">
                 {manga.title}
               </CardTitle>
             </Link>
             {manga.id && (
-              <DropDownCommands setIsEdit={setIsEdit} handleDelete={handleDelete} />
+              <DropDownCommands
+               className="self-start"
+                setIsEdit={setIsEdit}
+                handleDelete={handleDelete}
+              />
             )}
           </div>
         </CardHeader>

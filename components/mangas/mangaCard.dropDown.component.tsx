@@ -8,16 +8,17 @@ import { MoreVertical, Edit } from "lucide-react";
 import React from "react";
 import { DeleteForm } from "./mangasForm/deleteForm";
 import { Button } from "../ui/button";
+import { ClassNameValue } from "tailwind-merge";
 
 type DropDownProps = {
   setIsEdit: React.Dispatch<React.SetStateAction<boolean>>;
   handleDelete: () => Promise<void>;
 };
 
-export function DropDownCommands({ setIsEdit, handleDelete }: DropDownProps) {
+export function DropDownCommands({ setIsEdit, handleDelete, ...props}: DropDownProps & React.HtmlHTMLAttributes<HTMLButtonElement>) {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
+      <DropdownMenuTrigger {...props} asChild>
         <Button className="p-0" variant="outline">
           <MoreVertical />
         </Button>
