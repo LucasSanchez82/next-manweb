@@ -1,9 +1,6 @@
-import { getPage } from "@/components/mangas/@actions/cookies";
-import { getSafeSessionServer, prisma } from "@/lib/utils";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
-import MangaContainer from "../../components/mangas/mangaContainer.component";
+import { prisma } from "@/lib/utils";
 import { sessionProvider } from "@/lib/utilsSession";
+import MangaContainer from "../../components/mangas/mangaContainer.component";
 
 const page = async ({
   searchParams,
@@ -11,11 +8,9 @@ const page = async ({
   searchParams: { [key: string]: string | string[] | undefined };
 }) => {
   return sessionProvider(async (session) => {
-    const cookieSore = cookies();
-    const searchedValue = String(cookieSore.get("searchedTitle")?.value || "");
-
+    const searchedValue = typeof searchParams.search === 'string' ? searchParams.search : '';
     const nbAffiche = Number(process.env.MANGAS_NB_AFFICHE || 5);
-    const currPage = getPage();
+    const currPage = Number(searchParams.page) || 0;
     const nbMangas = await prisma.manga.count({
       where: {
         userId: session.user.userId,
@@ -41,7 +36,6 @@ const page = async ({
       take: nbAffiche,
       skip: nbAffiche * (currPage - 1),
     });
-
     return (
       <main className="flex flex-col justify-center items-center text-center h-full">
         <MangaContainer

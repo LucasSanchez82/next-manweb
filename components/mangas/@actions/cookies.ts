@@ -2,8 +2,6 @@
 
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
-import { useRouter } from "next/navigation";
-
 export const setCookieSearchedTitle = (
   value: string | number,
   pathname?: string
@@ -35,3 +33,8 @@ export const decrCookiePage = () => {
     cookieStore.set("page", String(currPage - 1));
   }
 };
+
+export const resetCookiePage = () => {
+  const cookieStore = cookies();
+  cookieStore.set("page", "1");
+}

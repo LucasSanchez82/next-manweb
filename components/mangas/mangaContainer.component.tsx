@@ -1,10 +1,9 @@
-"use client";
 import { Manga } from "@/lib/types";
 import { Suspense } from "react";
 import { AddMangaDialog } from "../addManga/addMangaDialog.component";
 import { MangaCard } from "./mangaCard.component";
 import NavigationBetweenPagesBar from "./navigationBetweenpagesBar.component";
-import Searchbar from "./searchBar.component";
+import Searchbar from "./searchBar/searchBar.component";
 
 const MangaContainer = ({
   mangas: iniMangas,
