@@ -23,7 +23,7 @@ export const heroHeader: HeroHeader = {
 
 export const featureCards: ContentSection = {
   header: `Manweb en bref`,
-  subheader: `pour quoi ?`,
+  subheader: `pourquoi ?`,
   content: [
     {
       text: `Tous les fans de scans`,
