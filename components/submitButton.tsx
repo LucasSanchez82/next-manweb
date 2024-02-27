@@ -10,28 +10,37 @@ import { Loader2 } from "lucide-react";
 
 export function SubmitButton({
   children,
-  onload,
+  pendingCallback,
   className,
-  altError,
+  altPending: altError,
   ...props
 }: PropsWithChildren<
-  ButtonProps & React.RefAttributes<HTMLButtonElement> & { onload?: () => any; altError?: React.ReactNode }
+  ButtonProps &
+    React.RefAttributes<HTMLButtonElement> & {
+      pendingCallback?: (pending: boolean) => any;
+      altPending?: React.ReactNode;
+    }
 >) {
   const { pending } = useFormStatus();
   const content = children ?? "Submit";
-  useEffect(() => {
-    if (pending && onload) {
-      onload();
-    }
-  });
-
+  if (pendingCallback) {
+    console.log('🪄🪄🪄🪄')
+    useEffect(() => {
+      pendingCallback(pending);
+    }, [pending]);
+  }
   return (
     <Button
       {...props}
       className={cn("rounded cursor-pointer p-1", className)}
       type="submit"
+      disabled={pending}
     >
-      {pending ? altError  || <Loader2 className="infinite-rotate" /> : content}
+      {pendingCallback
+        ? content
+        : pending
+        ? altError || <Loader2 className="infinite-rotate" />
+        : content}
     </Button>
   );
 }

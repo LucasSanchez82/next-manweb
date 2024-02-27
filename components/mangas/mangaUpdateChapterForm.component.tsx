@@ -1,11 +1,9 @@
 "use client";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { updateManga } from "./@actions/update";
-import { useFormStatus } from "react-dom";
-import { Download, Loader2, Save } from "lucide-react";
+import { UpdateIcon } from "@radix-ui/react-icons";
+import { useState } from "react";
 import { SubmitButton } from "../submitButton";
-import {UpdateIcon} from '@radix-ui/react-icons'
+import { updateManga } from "./@actions/update";
 
 export const MangaUpdateForm = ({
   chapter,
@@ -14,6 +12,14 @@ export const MangaUpdateForm = ({
   idManga: string | number;
   chapter: string | number;
 }) => {
+  const [buttonClass, setButtonClass] = useState("");
+  const rotateButton = (rotate: boolean) => {
+    if (rotate) {
+      setButtonClass("infinite-rotate");
+    } else {
+      setButtonClass("");
+    }
+  };
   return (
     <form
       className="flex items-center justify-around p-0 w-full"
@@ -29,9 +35,15 @@ export const MangaUpdateForm = ({
         id="chapter"
         placeholder="chapter.."
       />
-      <SubmitButton altError={<UpdateIcon className="infinite-rotate" />} variant='outline' ><UpdateIcon width={'35px'} /></SubmitButton>
-      
-      
+      <SubmitButton
+        pendingCallback={(pending) => {
+          rotateButton(pending);
+          console.log({ buttonClass });
+        }}
+        variant="outline"
+      >
+        <UpdateIcon className={buttonClass} width={"35px"} />
+      </SubmitButton>
     </form>
   );
 };
