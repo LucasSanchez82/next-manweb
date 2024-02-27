@@ -12,14 +12,6 @@ export const MangaUpdateForm = ({
   idManga: string | number;
   chapter: string | number;
 }) => {
-  const [buttonClass, setButtonClass] = useState("");
-  const rotateButton = (rotate: boolean) => {
-    if (rotate) {
-      setButtonClass("infinite-rotate");
-    } else {
-      setButtonClass("");
-    }
-  };
   return (
     <form
       className="flex items-center justify-around p-0 w-full"
@@ -36,13 +28,10 @@ export const MangaUpdateForm = ({
         placeholder="chapter.."
       />
       <SubmitButton
-        pendingCallback={(pending) => {
-          rotateButton(pending);
-          console.log({ buttonClass });
-        }}
+        altPending={<UpdateIcon className={"infinite-rotate"} width={"35px"} />}
         variant="outline"
       >
-        <UpdateIcon className={buttonClass} width={"35px"} />
+        <UpdateIcon width={"35px"} />
       </SubmitButton>
     </form>
   );
