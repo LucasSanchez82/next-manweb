@@ -22,6 +22,7 @@ import {
 import { Tabs, TabsContent } from "../ui/tabs";
 import { useToast } from "../ui/use-toast";
 import AddMangaListPreview from "./addMangaPreviewSearch";
+import { Sparkles } from "lucide-react";
 
 const AddMangaDialogContent = ({
   distMangas,
@@ -99,7 +100,7 @@ const AddMangaDialogContent = ({
             )}
             value="magic"
           >
-            🪄Magic🪄
+            <Sparkles />Magic<Sparkles />
           </TabsTrigger>
           <TabsTrigger
             className={cn(
