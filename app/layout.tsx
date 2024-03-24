@@ -5,6 +5,7 @@ import { siteConfig } from "@/config/site";
 import { getServerSession } from "next-auth";
 import { Inter } from "next/font/google";
 import { authOptions } from "./api/auth/[...nextauth]/route";
+import { SpeedInsights } from "@vercel/speed-insights/next"
 import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
@@ -72,6 +73,7 @@ export default async function RootLayout({
           "flex flex-col justify-between items-end min-h-[100vh]"
         }
       >
+        <SpeedInsights/>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
