@@ -5,6 +5,7 @@ import Hero from "@/components/pages/hero"
 import FeatureCards from "@/components/pages/feature-cards"
 import Features from "@/components/pages/features"
 export default async function Home() {
+  
   const session = await getServerSession(authOptions);
   if (session) {
     redirect("/mangas");

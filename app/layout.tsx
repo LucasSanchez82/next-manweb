@@ -1,15 +1,11 @@
 import { ModeToggle } from "@/components/modeToggle";
-import { SignInButtons, SignOutButtons } from "@/components/nextAuthButtons";
 import { ThemeProvider } from "@/components/theme-provider";
-import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/toaster";
-import type { Metadata } from "next";
+import { siteConfig } from "@/config/site";
 import { getServerSession } from "next-auth";
 import { Inter } from "next/font/google";
-import Link from "next/link";
 import { authOptions } from "./api/auth/[...nextauth]/route";
 import "./globals.css";
-import { siteConfig } from "@/config/site";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {

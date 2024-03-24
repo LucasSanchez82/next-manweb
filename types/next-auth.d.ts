@@ -1,4 +1,3 @@
-import { Triangle } from "lucide-react"
 import NextAuth from "next-auth"
 
 declare module "next-auth" {

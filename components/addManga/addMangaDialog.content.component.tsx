@@ -47,7 +47,6 @@ const AddMangaDialogContent = ({
   const [currValue, setCurrValue] = useState("magic");
   const addMangaProcess = async (mangaData: z.infer<typeof newMangaSchema>) => {
     const newManga = await addManga(mangaData);
-    console.log({ newManga });
     if ("error" in newManga) {
       toast({
         title:
