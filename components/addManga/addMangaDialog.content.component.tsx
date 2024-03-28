@@ -23,6 +23,7 @@ import { Tabs, TabsContent } from "../ui/tabs";
 import { useToast } from "../ui/use-toast";
 import AddMangaListPreview from "./addMangaPreviewSearch";
 import { Sparkles } from "lucide-react";
+import { log } from "console";
 
 const AddMangaDialogContent = ({
   distMangas,
@@ -46,23 +47,31 @@ const AddMangaDialogContent = ({
   const { toast } = useToast();
   const [currValue, setCurrValue] = useState("magic");
   const addMangaProcess = async (mangaData: z.infer<typeof newMangaSchema>) => {
-    const newManga = await addManga(mangaData);
-    if ("error" in newManga) {
+    try {
+      const newManga = await addManga(mangaData);
+      if ("error" in newManga) {
+        toast({
+          title:
+            typeof newManga.error === "string"
+              ? newManga.error
+              : "Erreur interne du serveur",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "ajoute avec succes",
+          variant: "default",
+        });
+        setOpen(false);
+        setDistMangas(null);
+        setSelectedManga(null);
+      }
+    } catch (error) {
       toast({
-        title:
-          typeof newManga.error === "string"
-            ? newManga.error
-            : "Erreur interne du serveur",
+        title:  "Erreur interne du serveur",
+        description: error instanceof Error ? error.message : "Erreur inconnu",
         variant: "destructive",
       });
-    } else {
-      toast({
-        title: "ajoute avec succes",
-        variant: "default",
-      });
-      setOpen(false);
-      setDistMangas(null);
-      setSelectedManga(null);
     }
   };
   const handleSubmit = async (values: any) => {
@@ -99,7 +108,9 @@ const AddMangaDialogContent = ({
             )}
             value="magic"
           >
-            <Sparkles />Magic<Sparkles />
+            <Sparkles />
+            Magic
+            <Sparkles />
           </TabsTrigger>
           <TabsTrigger
             className={cn(

@@ -1,12 +1,12 @@
-
+"use server";
 import { prisma } from "@/lib/utils";
 import { sessionProvider } from "@/lib/utilsSession";
 import { newMangaSchema } from "@/schemas/mangasSchemas";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
-const addMangaProcess = async (newManga: z.infer<typeof newMangaSchema>) => {
-  const safeBody = newMangaSchema.safeParse(newManga);
+const addManga = async (newMangaToAdd: z.infer<typeof newMangaSchema>) => {
+  const safeBody = newMangaSchema.safeParse(newMangaToAdd);
   if (safeBody.success) {
     const { data: manga } = safeBody;
     return sessionProvider(
@@ -18,6 +18,7 @@ const addMangaProcess = async (newManga: z.infer<typeof newMangaSchema>) => {
               userId: session?.user?.userId!,
             },
           });
+          revalidatePath("/mangas");
           return { message: createdManga };
         } catch (error) {
           return { error };
@@ -30,14 +31,6 @@ const addMangaProcess = async (newManga: z.infer<typeof newMangaSchema>) => {
   } else {
     return { error: safeBody.error.message };
   }
-};
-
-const addManga = async (newMangaToAdd: z.infer<typeof newMangaSchema>) => {
-  const safeParse = newMangaSchema.safeParse(newMangaToAdd);
-  if (safeParse.success) {
-    revalidatePath("/mangas");
-    return newMangaToAdd;
-  } else throw new Error("Mauvais type de donnee en parametre🪄🪄");
 };
 
 export default addManga;
