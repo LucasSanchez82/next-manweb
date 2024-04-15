@@ -27,6 +27,7 @@ const page = async ({
         userId: session.user.userId,
         title: {
           contains: searchedValue,
+          mode: "insensitive"
         },
         isDeleted: false,
       },
@@ -36,6 +37,8 @@ const page = async ({
       take: nbAffiche,
       skip: nbAffiche * (currPage - 1),
     });
+    console.log(mangas);
+    
     return (
       <main className="flex flex-col justify-center items-center text-center h-full">
         <MangaContainer
