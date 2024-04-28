@@ -11,6 +11,15 @@ const addManga = async (newMangaToAdd: z.infer<typeof newMangaSchema>) => {
     const { data: manga } = safeBody;
     return sessionProvider(
       async (session) => {
+        console.clear();
+        console.log({
+          ...manga,
+          userId: session?.user?.userId!,
+        });
+        console.table({
+          ...manga,
+          userId: session?.user?.userId!,
+        });
         try {
           const createdManga = await prisma.manga.create({
             data: {
@@ -21,7 +30,8 @@ const addManga = async (newMangaToAdd: z.infer<typeof newMangaSchema>) => {
           revalidatePath("/mangas");
           return { message: createdManga };
         } catch (error) {
-          return { error };
+          console.error(error);
+          throw new Error("Erreur interne du serveur");
         }
       },
       () => {

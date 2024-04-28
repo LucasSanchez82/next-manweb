@@ -47,6 +47,9 @@ const AddMangaDialogContent = ({
   const { toast } = useToast();
   const [currValue, setCurrValue] = useState("magic");
   const addMangaProcess = async (mangaData: z.infer<typeof newMangaSchema>) => {
+    console.clear()
+    console.log(mangaData)
+    console.table(mangaData)
     try {
       const newManga = await addManga(mangaData);
       if ("error" in newManga) {
@@ -68,7 +71,7 @@ const AddMangaDialogContent = ({
       }
     } catch (error) {
       toast({
-        title:  "Erreur interne du serveur",
+        title: "Erreur interne du serveur",
         description: error instanceof Error ? error.message : "Erreur inconnu",
         variant: "destructive",
       });
