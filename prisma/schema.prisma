@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
   previewFeatures = ["fullTextSearch"]
@@ -12,20 +9,19 @@ datasource db {
 }
 
 model Account {
-  id                String  @id @default(cuid())
+  id                String   @id @default(cuid())
   userId            String
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -45,8 +41,8 @@ model User {
   emailVerified DateTime?
   image         String?
   accounts      Account[]
-  sessions      Session[]
   mangas        Manga[]
+  sessions      Session[]
 }
 
 model VerificationToken {
@@ -58,16 +54,18 @@ model VerificationToken {
 }
 
 model Manga {
-  id        Int    @unique @default(autoincrement())
-  title     String
-  linkManga String
-  linkImage String
-  chapter   Float
-  isDeleted Boolean @default(false)
+  id             Int               @id @default(autoincrement())
+  title          String
+  linkManga      String
+  linkImage      String
+  chapter        Float
+  isDeleted      Boolean           @default(false)
+  userId         String
+  historiques    HistoriqueManga[]
+  user           User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  MangaCategorie MangaCategorie[] 
 
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  historiques HistoriqueManga[]
+  @@index([title, userId, isDeleted])
 }
 
 model HistoriqueManga {
@@ -77,7 +75,24 @@ model HistoriqueManga {
   linkImage String
   chapter   Float
   updatedAt DateTime @default(now())
+  mangaId   Int
+  manga     Manga    @relation(fields: [mangaId], references: [id])
+}
 
-  mangaId Int
-  manga Manga @relation(fields: [mangaId], references: [id])
+model Categorie {
+  id             Int             @id @default(autoincrement())
+  libelle        String @unique 
+  MangaCategorie MangaCategorie[]
+
+  @@index([libelle])
+}
+
+model MangaCategorie {
+  mangaId     Int       
+  categorieId Int       
+  Categorie   Categorie @relation(fields: [categorieId], references: [id])
+  Manga       Manga     @relation(fields: [mangaId], references: [id], onDelete: Cascade)
+
+  @@id([mangaId, categorieId])
+  @@unique([mangaId, categorieId])
 }
