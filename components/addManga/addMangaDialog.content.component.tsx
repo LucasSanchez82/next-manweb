@@ -23,7 +23,6 @@ import { Tabs, TabsContent } from "../ui/tabs";
 import { useToast } from "../ui/use-toast";
 import AddMangaListPreview from "./addMangaPreviewSearch";
 import { Sparkles } from "lucide-react";
-import { log } from "console";
 
 const AddMangaDialogContent = ({
   distMangas,
@@ -47,17 +46,15 @@ const AddMangaDialogContent = ({
   const { toast } = useToast();
   const [currValue, setCurrValue] = useState("magic");
   const addMangaProcess = async (mangaData: z.infer<typeof newMangaSchema>) => {
-    console.clear()
-    console.log(mangaData)
-    console.table(mangaData)
+    console.clear();
+    console.log(mangaData);
+    console.table(mangaData);
     try {
       const newManga = await addManga(mangaData);
       if ("error" in newManga) {
+        console.error(newManga.error);
         toast({
-          title:
-            typeof newManga.error === "string"
-              ? newManga.error
-              : "Erreur interne du serveur",
+          title: "Erreur interne du serveur",
           variant: "destructive",
         });
       } else {
@@ -70,6 +67,7 @@ const AddMangaDialogContent = ({
         setSelectedManga(null);
       }
     } catch (error) {
+      console.error(error);
       toast({
         title: "Erreur interne du serveur",
         description: error instanceof Error ? error.message : "Erreur inconnu",
@@ -101,95 +99,94 @@ const AddMangaDialogContent = ({
     }
   };
   return (
-    <>
-      <Tabs defaultValue="magic" onValueChange={setCurrValue} value={currValue}>
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger
-            className={cn(
-              "rounded",
-              currValue === "magic" && "bg-primary text-secondary"
-            )}
-            value="magic"
-          >
-            <Sparkles />
-            Magic
-            <Sparkles />
-          </TabsTrigger>
-          <TabsTrigger
-            className={cn(
-              "rounded",
-              currValue === "manual" && "bg-primary text-secondary"
-            )}
-            value="manual"
-          >
-            Manual
-          </TabsTrigger>
-        </TabsList>
-        <TabsContent value="magic">
-          <AddMangaListPreview
-            {...{
-              distMangas: distMangas || { genre: {}, title: [] },
-              setDistMangas,
-              setSelectedManga,
-              upDistMangas,
-            }}
-          />
-
-          {selectedManga && (
-            <Card className="w-[350px] m-auto mt-5 min-h-[175px] flex flex-col justify-between items-center relative overflow-hidden">
-              <CardHeader className="bg-secondary rounded">
-                <Link href={selectedManga.url} target={"_blank"}>
-                  <CardTitle className="text-center p-1 pr-2 pl-2">
-                    {selectedManga.nom_match}
-                  </CardTitle>
-                </Link>
-              </CardHeader>
-              <CardContent className="absolute m-0 p-0 w-full h-full">
-                <img
-                  className={"rounded object-cover w-full h-full "}
-                  src={
-                    "https://scan-manga.com/img/manga/" + selectedManga.image
-                  }
-                  alt=""
-                />
-              </CardContent>
-              <CardFooter className="w-100 z-10">
-                <form
-                  action={async () => {
-                    await addMangaProcess({
-                      title: selectedManga?.nom_match,
-                      linkManga: (selectedManga &&
-                        `https://scan-manga.com${selectedManga.url}`)!,
-                      linkImage: (selectedManga &&
-                        `https://scan-manga.com/img/manga/${selectedManga.image}`)!,
-                      chapter: 0,
-                    });
-                  }}
-                >
-                  <SubmitButton>Ajouter</SubmitButton>
-                </form>
-              </CardFooter>
-            </Card>
+    <Tabs defaultValue="magic" onValueChange={setCurrValue} value={currValue}>
+      <TabsList className="grid w-full grid-cols-2">
+        <TabsTrigger
+          className={cn(
+            "rounded",
+            currValue === "magic" && "bg-primary text-secondary"
           )}
-        </TabsContent>
-        <TabsContent value="manual">
-          <AutoForm
-            formSchema={newMangaSchema}
-            action={handleSubmit}
-            values={{
-              title: selectedManga?.nom_match,
-              linkManga: (selectedManga &&
-                `https://scan-manga.com${selectedManga.url}`)!,
-              linkImage: (selectedManga &&
-                `https://scan-manga.com/img/manga/${selectedManga.image}`)!,
-              chapter: 0,
-            }}
-          >
-            <SubmitButton>Ajouter</SubmitButton>
-          </AutoForm>
-        </TabsContent>
-      </Tabs>
-    </>
+          value="magic"
+        >
+          <Sparkles />
+          Magic
+          <Sparkles />
+        </TabsTrigger>
+        <TabsTrigger
+          className={cn(
+            "rounded",
+            currValue === "manual" && "bg-primary text-secondary"
+          )}
+          value="manual"
+        >
+          Manual
+        </TabsTrigger>
+      </TabsList>
+      <TabsContent value="magic">
+        <AddMangaListPreview
+          {...{
+            distMangas: distMangas || { genre: {}, title: [] },
+            setDistMangas,
+            setSelectedManga,
+            upDistMangas,
+          }}
+        />
+
+        {selectedManga && (
+          <Card className="w-[350px] m-auto mt-5 min-h-[175px] flex flex-col justify-between items-center relative overflow-hidden">
+            <CardHeader className="bg-secondary rounded">
+              <Link href={selectedManga.url} target={"_blank"}>
+                <CardTitle className="text-center p-1 pr-2 pl-2">
+                  {selectedManga.nom_match}
+                </CardTitle>
+              </Link>
+            </CardHeader>
+            <CardContent className="absolute m-0 p-0 w-full h-full">
+              <img
+                className={"rounded object-cover w-full h-full "}
+                src={"https://scan-manga.com/img/manga/" + selectedManga.image}
+                alt=""
+              />
+            </CardContent>
+            <CardFooter className="w-100 z-10">
+              <form
+                action={async () => {
+                  await addMangaProcess({
+                    title: selectedManga?.nom_match,
+                    linkManga:
+                      selectedManga &&
+                      `https://scan-manga.com${selectedManga.url}`,
+                    linkImage:
+                      selectedManga &&
+                      `https://scan-manga.com/img/manga/${selectedManga.image}`,
+                    chapter: 0,
+                    tags: [],
+                  });
+                }}
+              >
+                <SubmitButton>Ajouter</SubmitButton>
+              </form>
+            </CardFooter>
+          </Card>
+        )}
+      </TabsContent>
+      <TabsContent value="manual">
+        <AutoForm
+          formSchema={newMangaSchema}
+          action={handleSubmit}
+          values={{
+            title: selectedManga?.nom_match,
+            linkManga: (selectedManga &&
+              `https://scan-manga.com${selectedManga.url}`)!,
+            linkImage: (selectedManga &&
+              `https://scan-manga.com/img/manga/${selectedManga.image}`)!,
+            chapter: 0,
+          }}
+        >
+          <SubmitButton>Ajouter</SubmitButton>
+        </AutoForm>
+      </TabsContent>
+    </Tabs>
   );
 };
 

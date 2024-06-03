@@ -17,6 +17,7 @@ export const mangaBaseSchema = z.object({
       message: "n'est pas détecté comme une URL d'image https",
     })
     .describe("lien image (https://site.com/image.png)"),
+  tags: z.array(z.object({libelle: z.string().min(3).max(25).describe("nom de la catégorie")})).describe("Categories: ")
 });
 
 export const newMangaSchema = mangaBaseSchema.extend({

@@ -37,7 +37,6 @@ const page = async ({
       take: nbAffiche,
       skip: nbAffiche * (currPage - 1),
     });
-    console.log(mangas);
     
     return (
       <main className="flex flex-col justify-center items-center text-center h-full">

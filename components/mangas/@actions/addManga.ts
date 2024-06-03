@@ -11,20 +11,18 @@ const addManga = async (newMangaToAdd: z.infer<typeof newMangaSchema>) => {
     const { data: manga } = safeBody;
     return sessionProvider(
       async (session) => {
-        console.clear();
-        console.log({
-          ...manga,
-          userId: session?.user?.userId!,
-        });
         console.table({
           ...manga,
-          userId: session?.user?.userId!,
+          userId: session?.user?.userId,
         });
         try {
           const createdManga = await prisma.manga.create({
             data: {
-              ...manga,
-              userId: session?.user?.userId!,
+              title: manga.title,
+              linkManga: manga.linkManga,
+              linkImage: manga.linkImage,
+              chapter: manga.chapter,
+              userId: session?.user?.userId,
             },
           });
           revalidatePath("/mangas");

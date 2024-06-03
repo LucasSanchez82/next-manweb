@@ -7,13 +7,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import fetchScanMangaBrut from "@/controller/mangas/fetchScanMangasBrut";
 import {
   ScanMangaDatasType,
-  ScanMangaTitleType,
-  scanMangaDatasSchema,
+  ScanMangaTitleType
 } from "@/schemas/scrappingDatasShemas";
 import { PlusCircle } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useToast } from "../ui/use-toast";
 import AddMangaDialogContent from "./addMangaDialog.content.component";
 
@@ -24,26 +24,8 @@ export const AddMangaDialog = () => {
     null
   );
   const { toast } = useToast();
-  const fetchScanManga = async (encodedUri: string) => {
-    const response = await fetch(
-      "https://www.scan-manga.com/api/search/quick.json?term=" + encodedUri
-    );
-    if (response.ok) {
-      const scanMangasDatas = await response.json();
-      const safeScanMangasDatas =
-        scanMangaDatasSchema.safeParse(scanMangasDatas);
-      if (safeScanMangasDatas.success) {
-        setDistMangas(safeScanMangasDatas.data);
-      }
-    } else {
-      console.log(await response.json());
-      toast({
-        title: "Impossible d'utiliser la recherche magique 😭",
-        description: "Esssaye de désactiver ton vpn",
-        variant: "destructive",
-      });
-    }
-  };
+  const fetchScanMangaPrepared = fetchScanMangaBrut(setDistMangas, toast);
+  
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -61,7 +43,7 @@ export const AddMangaDialog = () => {
             distMangas: distMangas || { genre: {}, title: [] },
             setDistMangas,
             useSelectedManga: { setSelectedManga, selectedManga },
-            upDistMangas: fetchScanManga,
+            upDistMangas: fetchScanMangaPrepared,
             setOpen,
           }}
         />
@@ -69,3 +51,5 @@ export const AddMangaDialog = () => {
     </Dialog>
   );
 };
+
+
