@@ -16,13 +16,20 @@ const addManga = async (
   console.log("synccategories depuis addmanga🔍");
 
   await syncCategories(newMangaToAdd.tags);
-  
+
   if (safeBody.success) {
     const { data: manga } = safeBody;
     return sessionProvider(
       async (session) => {
         console.log("synccategories depuis addmanga🔍");
         try {
+          const categoriesIn = await prisma.categorie.findMany({
+            where: {
+              libelle: {
+                in: newMangaToAdd.tags
+              }
+            }
+          })
           const createdManga = await prisma.manga.create({
             data: {
               title: manga.title,
@@ -30,6 +37,14 @@ const addManga = async (
               linkImage: manga.linkImage,
               chapter: manga.chapter,
               userId: session?.user?.userId,
+              MangaCategorie: {
+                createMany: {
+                  data: categoriesIn.map((categorie) => ({
+                    categorieId: categorie.id,
+                  })),
+                  skipDuplicates: true,
+                },
+              }
             },
           });
           revalidatePath("/mangas");
