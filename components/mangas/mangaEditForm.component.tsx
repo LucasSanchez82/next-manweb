@@ -1,12 +1,10 @@
 "use client";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
-import { mangaSchema } from "@/schemas/mangasSchemas";
 import { Manga } from "@/lib/types";
+import { mangaSchema } from "@/schemas/mangasSchemas";
 import { Dispatch, SetStateAction } from "react";
-import { useFormStatus } from "react-dom";
-import { editManga } from "./@actions/editManga";
+import { editManga } from "../../controller/mangas/@actions/editManga";
 import { SubmitButton } from "../submitButton";
 
 type editFormType = {

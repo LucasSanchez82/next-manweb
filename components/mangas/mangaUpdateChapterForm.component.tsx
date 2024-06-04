@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { UpdateIcon } from "@radix-ui/react-icons";
 import { useState } from "react";
 import { SubmitButton } from "../submitButton";
-import { updateManga } from "./@actions/update";
+import { updateManga } from "../../controller/mangas/@actions/update";
 
 export const MangaUpdateForm = ({
   chapter,

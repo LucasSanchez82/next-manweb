@@ -1,5 +1,5 @@
 import { getSafeSessionServer, prisma } from "@/lib/utils";
-import { mangaSchema, newMangaSchema } from "@/schemas/mangasSchemas";
+import { mangaSchema, newMangaSchemaAutoform } from "@/schemas/mangasSchemas";
 import { NextResponse } from "next/server";
 
 
@@ -23,7 +23,7 @@ export const PUT = async (req: Request) => {
 export const POST = async (req: Request) => {
 
     const body = await req.json();
-    const safeBody = newMangaSchema.safeParse(body);
+    const safeBody = newMangaSchemaAutoform.safeParse(body);
     if (safeBody.success) {
         const { data: manga } = safeBody;
         const session = await getSafeSessionServer();

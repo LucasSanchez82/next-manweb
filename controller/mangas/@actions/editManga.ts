@@ -1,7 +1,7 @@
 "use server";
 
 import { getSafeSessionServer, prisma } from "@/lib/utils";
-import { editMangaSchema, mangaSchema } from "@/schemas/mangasSchemas";
+import { editMangaSchema } from "@/schemas/mangasSchemas";
 
 
 

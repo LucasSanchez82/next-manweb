@@ -1,20 +1,27 @@
 "use server";
 import { prisma } from "@/lib/utils";
 import { sessionProvider } from "@/lib/utilsSession";
-import { newMangaSchema } from "@/schemas/mangasSchemas";
+import {
+  newMangaSchemaAutoform,
+  newMangaSchemaWithTags,
+} from "@/schemas/mangasSchemas";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { syncCategories } from "../categories/categories.utils";
 
-const addManga = async (newMangaToAdd: z.infer<typeof newMangaSchema>) => {
-  const safeBody = newMangaSchema.safeParse(newMangaToAdd);
+const addManga = async (
+  newMangaToAdd: z.infer<typeof newMangaSchemaWithTags>
+) => {
+  const safeBody = newMangaSchemaAutoform.safeParse(newMangaToAdd);
+  console.log("synccategories depuis addmanga🔍");
+
+  await syncCategories(newMangaToAdd.tags);
+  
   if (safeBody.success) {
     const { data: manga } = safeBody;
     return sessionProvider(
       async (session) => {
-        console.table({
-          ...manga,
-          userId: session?.user?.userId,
-        });
+        console.log("synccategories depuis addmanga🔍");
         try {
           const createdManga = await prisma.manga.create({
             data: {

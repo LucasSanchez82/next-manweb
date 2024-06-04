@@ -1,6 +1,6 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { newMangaSchema } from "@/schemas/mangasSchemas";
+import { newMangaSchemaAutoform, newMangaSchemaWithTags } from "@/schemas/mangasSchemas";
 import {
   ScanMangaDatasType,
   ScanMangaTitleType,
@@ -9,7 +9,7 @@ import { TabsList, TabsTrigger } from "@radix-ui/react-tabs";
 import Link from "next/link";
 import { SetStateAction, useState } from "react";
 import { z } from "zod";
-import addManga from "../mangas/@actions/addManga";
+import addManga from "../../controller/mangas/@actions/addManga";
 import { SubmitButton } from "../submitButton";
 import AutoForm from "../ui/auto-form";
 import {
@@ -23,6 +23,7 @@ import { Tabs, TabsContent } from "../ui/tabs";
 import { useToast } from "../ui/use-toast";
 import AddMangaListPreview from "./addMangaPreviewSearch";
 import { Sparkles } from "lucide-react";
+import MultiSelectorCategories from "../mangas/mangasForm/multiSelectorCategories";
 
 const AddMangaDialogContent = ({
   distMangas,
@@ -43,12 +44,11 @@ const AddMangaDialogContent = ({
   setOpen: (value: boolean) => void;
 }) => {
   const { setSelectedManga, selectedManga } = useSelectedManga;
+  const [categories, setCategories] = useState<string[]>([]);
   const { toast } = useToast();
   const [currValue, setCurrValue] = useState("magic");
-  const addMangaProcess = async (mangaData: z.infer<typeof newMangaSchema>) => {
-    console.clear();
-    console.log(mangaData);
-    console.table(mangaData);
+  const addMangaProcess = async (mangaData: z.infer<typeof newMangaSchemaWithTags>) => {
+
     try {
       const newManga = await addManga(mangaData);
       if ("error" in newManga) {
@@ -79,10 +79,10 @@ const AddMangaDialogContent = ({
     if (values instanceof FormData) {
       const newManga = Object.fromEntries(values);
 
-      const safeNewManga = newMangaSchema.safeParse(newManga);
+      const safeNewManga = newMangaSchemaAutoform.safeParse(newManga);
 
       if (safeNewManga.success) {
-        return addMangaProcess(safeNewManga.data);
+        return addMangaProcess({...safeNewManga.data, tags: categories});
       } else {
         toast({
           title: "Valeurs invalides",
@@ -160,7 +160,7 @@ const AddMangaDialogContent = ({
                       selectedManga &&
                       `https://scan-manga.com/img/manga/${selectedManga.image}`,
                     chapter: 0,
-                    tags: [],
+                    tags: categories,
                   });
                 }}
               >
@@ -172,7 +172,7 @@ const AddMangaDialogContent = ({
       </TabsContent>
       <TabsContent value="manual">
         <AutoForm
-          formSchema={newMangaSchema}
+          formSchema={newMangaSchemaAutoform}
           action={handleSubmit}
           values={{
             title: selectedManga?.nom_match,
@@ -183,6 +183,7 @@ const AddMangaDialogContent = ({
             chapter: 0,
           }}
         >
+          <MultiSelectorCategories setCategories={setCategories} />
           <SubmitButton>Ajouter</SubmitButton>
         </AutoForm>
       </TabsContent>

@@ -37,7 +37,7 @@ const AddMangaListPreview = ({
       }
       timeOutId = setTimeout(() => {
         upDistMangas(encodeURIComponent(title));
-      }, 300);
+      }, 300) as NodeJS.Timeout;
     }
   };
   return (

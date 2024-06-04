@@ -17,14 +17,17 @@ export const mangaBaseSchema = z.object({
       message: "n'est pas détecté comme une URL d'image https",
     })
     .describe("lien image (https://site.com/image.png)"),
-  tags: z.array(z.object({libelle: z.string().min(3).max(25).describe("nom de la catégorie")})).describe("Categories: ")
 });
 
-export const newMangaSchema = mangaBaseSchema.extend({
+export const newMangaSchemaAutoform = mangaBaseSchema.extend({
   chapter: z.coerce.number().describe("dernier chapitre lu"),
 });
 
-export const mangaSchema = newMangaSchema.extend({
+export const newMangaSchemaWithTags = newMangaSchemaAutoform.extend({
+  tags: z.array(z.string()).describe("tags du manga"),
+});
+
+export const mangaSchema = newMangaSchemaAutoform.extend({
   id: z.coerce.number(),
 });
 

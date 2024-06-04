@@ -13,7 +13,7 @@ import { X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { useToast } from "../ui/use-toast";
-import deleteManga from "./@actions/deleteManga";
+import deleteManga from "../../controller/mangas/@actions/deleteManga";
 import { DropDownCommands } from "./mangaCard.dropDown.component";
 import { EditForm } from "./mangaEditForm.component";
 import { MangaUpdateForm } from "./mangaUpdateChapterForm.component";
