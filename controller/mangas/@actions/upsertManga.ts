@@ -13,6 +13,7 @@ import { Manga } from "@prisma/client";
 type MangaCreate = z.infer<typeof newMangaSchemaWithTags>;
 type MangaUpdate = {
   idManga: number;
+  oldtags: string[];
 } & Partial<MangaCreate>;
 type mangaEssential = MangaCreate | MangaUpdate;
 
@@ -52,11 +53,14 @@ const isMangaOfUser = async (mangaId: number, userId: string) => {
 const updateMangaProcess = async (
   manga: MangaUpdate,
   session: Session,
-  categoriesData: {
-    categorieId: number;
-  }[]
+  {
+    add: categoriesToAdd,
+    delete: categoriesToDelete,
+  }: {
+    add: { categorieId: number }[];
+    delete: { categorieId: number }[];
+  }
 ) => {
-  console.table([categoriesData]);
   const isMangaOwnedByUser = await isMangaOfUser(
     manga.idManga,
     session.user.userId
@@ -74,9 +78,10 @@ const updateMangaProcess = async (
         userId: session.user.userId,
         MangaCategorie: {
           createMany: {
-            data: categoriesData,
+            data: categoriesToAdd,
             skipDuplicates: true,
           },
+          deleteMany: categoriesToDelete,
         },
       },
     });
@@ -85,38 +90,57 @@ const updateMangaProcess = async (
 
 const upSertManga = async (newMangaToAdd: mangaEssential): Promise<Manga> => {
   const safeBody = newMangaSchemaWithTags.safeParse(newMangaToAdd);
-  console.log("synccategories depuis addmanga🔍");
   let categoriesIn = undefined;
-  let categoriesData = undefined;
-  if(newMangaToAdd.tags) {
+
+  const categoriesData: {
+    add: { categorieId: number }[];
+    delete: { categorieId: number }[];
+  } = { add: [], delete: [] };
+
+  if (newMangaToAdd.tags) {
     await syncCategories(newMangaToAdd.tags);
-    categoriesIn = await prisma.categorie.findMany({
+    const categoriesIn = await prisma.categorie.findMany({
       where: {
         libelle: {
           in: newMangaToAdd.tags,
         },
       },
     });
-    categoriesData = categoriesIn.map((categorie) => ({
+
+    categoriesData.add = categoriesIn.map((categorie) => ({
       categorieId: categorie.id,
     }));
   }
   if (safeBody.success) {
     const { data: manga } = safeBody;
-    console.table(manga)
+    console.table(manga);
     return sessionProvider(
       async (session) => {
         console.log("synccategories depuis addmanga🔍");
         try {
-          if ('idManga' in newMangaToAdd && typeof newMangaToAdd.idManga === 'number') {
-            console.log({
-              idManga: newMangaToAdd.idManga,
-              message: "je modifie",
+          if (
+            "idManga" in newMangaToAdd &&
+            typeof newMangaToAdd.idManga === "number"
+          ) {
+            const categoriesToDelete = newMangaToAdd.oldtags.filter(element => !newMangaToAdd.tags?.includes(element))
+            const categoriesDeleteIn = await prisma.categorie.findMany({
+              where: {
+                libelle: {
+                  in: categoriesToDelete
+                },
+              },
             });
+            categoriesData.delete = categoriesDeleteIn.map((categorie) => ({
+              categorieId: categorie.id,
+            }));
             const updatedManga = await updateMangaProcess(
-              { ...manga, idManga: newMangaToAdd.idManga },
+              {
+                ...manga,
+                idManga: newMangaToAdd.idManga,
+                oldtags: newMangaToAdd.oldtags,
+              },
               session,
-              categoriesData || [],
+              categoriesData
             );
             revalidatePath("/mangas");
             return updatedManga;
@@ -124,7 +148,7 @@ const upSertManga = async (newMangaToAdd: mangaEssential): Promise<Manga> => {
             const createdManga = await createmangaProcess(
               manga,
               session,
-              categoriesData || [],
+              categoriesData.add || []
             );
             revalidatePath("/mangas");
             return createdManga;
@@ -143,18 +167,13 @@ const upSertManga = async (newMangaToAdd: mangaEssential): Promise<Manga> => {
   }
 };
 
-const addManga = async (
-  newMangaToAdd: MangaCreate
-) => {
-console.log(`🍄🍄🍄 add manga`)
-return await upSertManga(newMangaToAdd);
+const addManga = async (newMangaToAdd: MangaCreate) => {
+  return await upSertManga(newMangaToAdd);
 };
 
-const updateManga = async (
-  newMangaToAdd: MangaUpdate
-) => {
-console.log(`🍄🍄🍄 update manga`)
-
+const updateManga = async (newMangaToAdd: MangaUpdate) => {
+  const { oldtags, tags } = newMangaToAdd;
+  console.log({ oldtags, tags });
   return await upSertManga(newMangaToAdd);
 };
 

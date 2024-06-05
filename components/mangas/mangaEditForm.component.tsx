@@ -17,6 +17,7 @@ type editFormType = MangaWithCategoriesEssential & {
   setManga: Dispatch<SetStateAction<MangaWithCategories>>;
   setIsEdit?: Dispatch<SetStateAction<boolean>>;
   useCategories: {categories: string[], setCategories: Dispatch<SetStateAction<string[]>>}
+  oldCategories: string[]
 };
 export const EditForm = ({
   linkImage,
@@ -26,6 +27,7 @@ export const EditForm = ({
   setIsEdit,
   setManga,
   useCategories,
+  oldCategories
 }: editFormType) => {
   const {categories, setCategories} = useCategories;
   const handleSubmit = async (formdata: FormData) => {
@@ -46,7 +48,8 @@ export const EditForm = ({
           title: safeValues.data.title,
           chapter: 0,
           idManga: id,
-          tags: categories
+          tags: categories,
+          oldtags: oldCategories
         });
 
         const safeManga = mangaSchema.safeParse(res);

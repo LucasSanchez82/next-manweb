@@ -27,7 +27,7 @@ export function MangaCard(mangaInitial: MangaWithCategories) {
     (categorie) => categorie.Categorie.libelle
   );
   const [categories, setCategories] = useState<string[]>(categoriesStr);
-
+  const oldCategories = [...categoriesStr];
   const handleDelete = async () => {
     if (manga.id) {
       const response = await deleteManga(manga.id);
@@ -68,6 +68,7 @@ export function MangaCard(mangaInitial: MangaWithCategories) {
               MangaCategorie: manga.MangaCategorie,
             }}
             useCategories={{categories, setCategories}}
+            oldCategories={oldCategories}
             setManga={setManga}
           />
         </CardContent>
