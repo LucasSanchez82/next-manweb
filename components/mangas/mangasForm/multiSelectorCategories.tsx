@@ -2,10 +2,11 @@
 import MultipleSelector, { Option } from "@/components/ui/multiple-selector";
 import { useToast } from "@/components/ui/use-toast";
 import { getCategories } from "@/controller/mangas/categories/@actions/categories";
+import { Categorie } from "@prisma/client";
 import React from "react";
 
 
-const MultiSelectorCategories = ({setCategories}: {setCategories: (categories: string[]) => void}) => {
+const MultiSelectorCategories = ({setCategories, categories}: {setCategories: (categories: string[]) => void, categories: string[]}) => {
   const { toast } = useToast();
   const searchCategories = async (value: string): Promise<Option[]> => {
     try {
@@ -37,9 +38,9 @@ const MultiSelectorCategories = ({setCategories}: {setCategories: (categories: s
   return (
     <MultipleSelector
       onSearch={handleSearch}
-      defaultOptions={[]}
       creatable
       placeholder="trying to search 'a' to get more options..."
+      value={categories.map((categorie) => ({label: categorie, value: categorie}))}
       loadingIndicator={
         <p className="py-2 text-center text-lg leading-10 text-muted-foreground">
           loading...

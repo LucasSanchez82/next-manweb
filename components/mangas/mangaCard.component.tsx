@@ -8,21 +8,25 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Manga } from "@/lib/types";
+import { MangaWithCategories } from "@/controller/types/mangas.types";
 import { X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import { useToast } from "../ui/use-toast";
 import deleteManga from "../../controller/mangas/@actions/deleteManga";
+import { useToast } from "../ui/use-toast";
 import { DropDownCommands } from "./mangaCard.dropDown.component";
 import { EditForm } from "./mangaEditForm.component";
 import { MangaUpdateForm } from "./mangaUpdateChapterForm.component";
 
-export function MangaCard(mangaInitial: Manga) {
-  const [manga, setManga] = useState<Manga>(mangaInitial);
+export function MangaCard(mangaInitial: MangaWithCategories) {
+  const [manga, setManga] = useState<MangaWithCategories>(mangaInitial);
   const [isErrorImage, setIsErrorImage] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const { toast } = useToast();
+  const categoriesStr: string[] = manga.MangaCategorie.map(
+    (categorie) => categorie.Categorie.libelle
+  );
+  const [categories, setCategories] = useState<string[]>(categoriesStr);
 
   const handleDelete = async () => {
     if (manga.id) {
@@ -61,7 +65,9 @@ export function MangaCard(mangaInitial: Manga) {
               linkManga: manga.linkManga,
               id: manga.id,
               setIsEdit,
+              MangaCategorie: manga.MangaCategorie,
             }}
+            useCategories={{categories, setCategories}}
             setManga={setManga}
           />
         </CardContent>
@@ -79,7 +85,7 @@ export function MangaCard(mangaInitial: Manga) {
             </Link>
             {manga.id && (
               <DropDownCommands
-               className="self-start"
+                className="self-start"
                 setIsEdit={setIsEdit}
                 handleDelete={handleDelete}
               />

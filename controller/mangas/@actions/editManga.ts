@@ -2,14 +2,12 @@
 
 import { getSafeSessionServer, prisma } from "@/lib/utils";
 import { editMangaSchema } from "@/schemas/mangasSchemas";
+import { z } from "zod";
 
 
 
-export const editManga = async (formdata: FormData) => {
-    const formObject = Object.fromEntries(formdata);
-    console.log(formObject);
-    
-    const safeparse = editMangaSchema.safeParse(formObject);
+export const editManga = async (values: z.infer<typeof editMangaSchema>) => {
+  const safeparse = editMangaSchema.safeParse(values);
     
     if(safeparse.success){
       const session = await getSafeSessionServer();

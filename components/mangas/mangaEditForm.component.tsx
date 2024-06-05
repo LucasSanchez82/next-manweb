@@ -2,79 +2,99 @@
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
 import { Manga } from "@/lib/types";
-import { mangaSchema } from "@/schemas/mangasSchemas";
-import { Dispatch, SetStateAction } from "react";
+import { editMangaSchema, mangaSchema } from "@/schemas/mangasSchemas";
+import { Dispatch, SetStateAction, useState } from "react";
 import { editManga } from "../../controller/mangas/@actions/editManga";
 import { SubmitButton } from "../submitButton";
+import MultiSelectorCategories from "./mangasForm/multiSelectorCategories";
+import {
+  MangaWithCategories,
+  MangaWithCategoriesEssential,
+} from "@/controller/types/mangas.types";
+import { updateManga } from "@/controller/mangas/@actions/upsertManga";
 
-type editFormType = {
-  title: string;
-  linkManga: string;
-  linkImage: string;
-  id: number;
-  setIsEdit?: Dispatch<SetStateAction<boolean>>
+type editFormType = MangaWithCategoriesEssential & {
+  setManga: Dispatch<SetStateAction<MangaWithCategories>>;
+  setIsEdit?: Dispatch<SetStateAction<boolean>>;
+  useCategories: {categories: string[], setCategories: Dispatch<SetStateAction<string[]>>}
 };
-export const EditForm = ({ linkImage, linkManga, title, id, setIsEdit, setManga }: editFormType & {setManga: Dispatch<SetStateAction<Manga>>}) => {
-  const handleSubmit = async(formdata: FormData) => {
-    if(!setIsEdit) {
+export const EditForm = ({
+  linkImage,
+  linkManga,
+  title,
+  id,
+  setIsEdit,
+  setManga,
+  useCategories,
+}: editFormType) => {
+  const {categories, setCategories} = useCategories;
+  const handleSubmit = async (formdata: FormData) => {
+    if (!setIsEdit) {
       toast({
-        variant: 'destructive',
+        variant: "destructive",
         title: "N est pas detecte comme en train d etre modifie",
-      })
+      });
       return;
     }
-    try{
-      const res = await editManga(formdata);
-      const safeManga = mangaSchema.safeParse(res);
-      if(safeManga.success) {
-        setManga((curr) => ({...curr, ...safeManga.data}));
-      }
-      
-      if('error' in res && res.error) {
-        toast({
-          title: res.error.join('\n'),
-          variant: 'destructive'
-        })
-      }else{
-        toast({
-          variant: 'default',
-          title: 'succes'
-        })
-        setIsEdit(false);
-      }
+    try {
+      const values = Object.fromEntries(formdata);
+      const safeValues = editMangaSchema.safeParse(values);
+      if (safeValues.success) {
+        const res = await updateManga({
+          linkImage: safeValues.data.linkImage,
+          linkManga: safeValues.data.linkManga,
+          title: safeValues.data.title,
+          chapter: 0,
+          idManga: id,
+          tags: categories
+        });
 
-    }catch(error) {
+        const safeManga = mangaSchema.safeParse(res);
+        if (safeManga.success) {
+          setManga((curr) => ({ ...curr, ...safeManga.data }));
+        }
+
+          toast({
+            variant: "default",
+            title: "succes",
+          });
+          setIsEdit(false);
+        }
+    } catch (error) {
       toast({
         title: "Erreur serveur interne",
-        variant: 'destructive'
+        variant: "destructive",
       });
       console.log(error);
-      
     }
-  }
-  
+  };
 
   return (
-    <form 
-    // action={editManga}
-    method="POST"
+    <form
+      // action={editManga}
+      method="POST"
       action={handleSubmit}
     >
       <Input type="text" className="hidden" name="id" value={id} />
       <Input id="title" type="text" defaultValue={title} name="title" />
-      link manga : 
+      lien manga :
       <Input
         id="linkManga"
         type="text"
         defaultValue={linkManga}
         name="linkManga"
       />
-      link image :
+      lien image :
       <Input
         id="linkImage"
         type="text"
         defaultValue={linkImage}
         name="linkImage"
+      />
+      Categories :
+      <MultiSelectorCategories
+        categories={categories}
+        setCategories={setCategories}
       />
       <SubmitButton />
     </form>

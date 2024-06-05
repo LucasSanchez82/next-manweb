@@ -9,7 +9,7 @@ import { TabsList, TabsTrigger } from "@radix-ui/react-tabs";
 import Link from "next/link";
 import { SetStateAction, useState } from "react";
 import { z } from "zod";
-import addManga from "../../controller/mangas/@actions/addManga";
+import {addManga} from "../../controller/mangas/@actions/upsertManga";
 import { SubmitButton } from "../submitButton";
 import AutoForm from "../ui/auto-form";
 import {
@@ -183,7 +183,7 @@ const AddMangaDialogContent = ({
             chapter: 0,
           }}
         >
-          <MultiSelectorCategories setCategories={setCategories} />
+          <MultiSelectorCategories categories={categories} setCategories={setCategories} />
           <SubmitButton>Ajouter</SubmitButton>
         </AutoForm>
       </TabsContent>

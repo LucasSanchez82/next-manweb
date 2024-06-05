@@ -11,6 +11,7 @@ const validCategorieWrapper = <T>(
   if (name.length > 2 && name.length < 26) {
     return callback(name);
   } else {
+    console.table({errorName: name, length: name.length})
     if (name.length <= 2)
       throw new IllegalArgumentError(
         "Le nom de la catégorie doit contenir au moins 3 caractères"
@@ -35,6 +36,7 @@ const validManyCategorieWrapper = <T>(
   if (isValid) {
     return callback(names);
   } else {
+    console.table(names.map((el) => ({ errorName: el, length: el.length })));
     throw new IllegalArgumentError(
       "Le nom de la catégorie doit contenir au moins 3 caractères / au plus 25 caractères"
     );
