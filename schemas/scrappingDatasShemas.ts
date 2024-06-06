@@ -38,7 +38,4 @@ export type ScanMangaTitleType = {
   // v_l_ch: string;
   // up: number;
 };
-export type ScanMangaDatasType = {
-  title: ScanMangaTitleType[];
-  genre: Record<string, string>;
-};
+export type ScanMangaDatasType = z.infer<typeof scanMangaDatasSchema>;
