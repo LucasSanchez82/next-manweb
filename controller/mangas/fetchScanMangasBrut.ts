@@ -7,7 +7,12 @@ function fetchScanMangaBrut(
 ) {
   return async (encodedUri: string) => {
     const response = await fetch(
-      "https://www.scan-manga.com/api/search/quick.json?term=" + encodedUri
+      `https://www.scan-manga.com/api/search/quick.json?term=${encodedUri}`, {
+        method: "GET",
+        credentials: "omit",
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+        }}
     );
     if (response.ok) {
       const scanMangasDatas = await response.json();
