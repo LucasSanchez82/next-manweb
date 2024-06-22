@@ -113,7 +113,6 @@ const upSertManga = async (newMangaToAdd: mangaEssential): Promise<Manga> => {
   }
   if (safeBody.success) {
     const { data: manga } = safeBody;
-    console.table(manga);
     return sessionProvider(
       async (session) => {
         console.log("synccategories depuis addmanga🔍");
