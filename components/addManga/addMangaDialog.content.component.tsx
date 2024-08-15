@@ -7,7 +7,7 @@ import {
 } from "@/schemas/scrappingDatasShemas";
 import { TabsList, TabsTrigger } from "@radix-ui/react-tabs";
 import Link from "next/link";
-import { SetStateAction, useState } from "react";
+import { SetStateAction, SyntheticEvent, useState } from "react";
 import { z } from "zod";
 import {addManga} from "../../controller/mangas/@actions/upsertManga";
 import { SubmitButton } from "../submitButton";
@@ -24,6 +24,8 @@ import { useToast } from "../ui/use-toast";
 import AddMangaListPreview from "./addMangaPreviewSearch";
 import { Sparkles } from "lucide-react";
 import MultiSelectorCategories from "../mangas/mangasForm/multiSelectorCategories";
+import { Input } from "../ui/input";
+import { getManga, isScanMangaUrl } from "@/controller/mangas/scanMangas";
 
 const AddMangaDialogContent = ({
   distMangas,
@@ -47,6 +49,8 @@ const AddMangaDialogContent = ({
   const [categories, setCategories] = useState<string[]>([]);
   const { toast } = useToast();
   const [currValue, setCurrValue] = useState("magic");
+
+
   const addMangaProcess = async (mangaData: z.infer<typeof newMangaSchemaWithTags>) => {
 
     try {
@@ -98,6 +102,20 @@ const AddMangaDialogContent = ({
       });
     }
   };
+  
+  const handleChange = async (event: SyntheticEvent) => {
+
+    if(event.target instanceof HTMLInputElement) {
+      const scanMangaLink = event.target.value;
+
+      if(isScanMangaUrl(scanMangaLink)) {
+        const manga = await getManga(scanMangaLink);
+        if(manga) {
+          setSelectedManga({genre: [], image: manga.img, nom_match: manga.title, url: manga.linkManga})
+        }
+      }
+    }
+  }
   return (
     <Tabs defaultValue="magic" onValueChange={setCurrValue} value={currValue}>
       <TabsList className="grid w-full grid-cols-2">
@@ -123,15 +141,7 @@ const AddMangaDialogContent = ({
         </TabsTrigger>
       </TabsList>
       <TabsContent value="magic">
-        <AddMangaListPreview
-          {...{
-            distMangas: distMangas || { genre: {}, title: [] },
-            setDistMangas,
-            setSelectedManga,
-            upDistMangas,
-          }}
-        />
-
+          <Input type="text" placeholder="lien scan-manga.com (https://www.scan-manga.com/****)" onChange={handleChange} />
         {selectedManga && (
           <Card className="w-[350px] m-auto mt-5 min-h-[175px] flex flex-col justify-between items-center relative overflow-hidden">
             <CardHeader className="bg-secondary rounded">
@@ -144,7 +154,7 @@ const AddMangaDialogContent = ({
             <CardContent className="absolute m-0 p-0 w-full h-full">
               <img
                 className={"rounded object-cover w-full h-full "}
-                src={"https://scan-manga.com/img/manga/" + selectedManga.image}
+                src={selectedManga.image}
                 alt=""
               />
             </CardContent>
@@ -157,8 +167,7 @@ const AddMangaDialogContent = ({
                       selectedManga &&
                       `https://scan-manga.com${selectedManga.url}`,
                     linkImage:
-                      selectedManga &&
-                      `https://scan-manga.com/img/manga/${selectedManga.image}`,
+                      selectedManga.image,
                     chapter: 0,
                     tags: categories,
                   });

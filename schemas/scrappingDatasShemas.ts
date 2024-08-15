@@ -29,7 +29,7 @@ export type ScanMangaTitleType = {
   nom_match: string;
   url: string;
   // demo: string;
-  genre: number[];
+  genre: string[];
   // statut: number;
   // type_lecture: number;
   // auteur: string;
@@ -38,4 +38,7 @@ export type ScanMangaTitleType = {
   // v_l_ch: string;
   // up: number;
 };
-export type ScanMangaDatasType = z.infer<typeof scanMangaDatasSchema>;
+export type ScanMangaDatasType = {
+  title: ScanMangaTitleType[];
+  genre: Record<string, string>;
+};
